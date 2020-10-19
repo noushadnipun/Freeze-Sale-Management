@@ -55,7 +55,7 @@
                         </td>
                         <td>{{$data->db_name}}</td>
                         @php
-                            $thisSaleItem = App\Saleitem::where('sales_id', $data->id)->get();
+                            $thisSaleItem = App\SaleItem::where('sales_id', $data->id)->get();
                         @endphp
                         <td style="vertical-align: top">
                             @foreach($thisSaleItem as $item)
