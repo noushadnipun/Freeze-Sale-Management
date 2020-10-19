@@ -13,6 +13,8 @@ class ServiceController extends Controller
         $getService = Service::orderBy('id', 'DESC')->get();
         if(!empty($id)){
             $editService = Service::find($id);
+        } else{
+            $editService = "";
         }
         return view('admin.service.index', compact('getService', 'editService'));
     }
