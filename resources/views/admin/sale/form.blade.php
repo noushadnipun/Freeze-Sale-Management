@@ -57,6 +57,7 @@
                                     data-token="{{$data->name}}" 
                                     data-mobile="<?php echo 'Mobile: '?>{{$data->mobile}}" 
                                     data-address="<?php echo 'Address: '?>{{$data->address}}" 
+                                    data-distributor="<?php $dataDistrobutor = App\Distributor::where('id', $data->distributor_id)->first(); echo 'Distributor: '?>{{!empty($dataDistrobutor) ? $dataDistrobutor->name: ''}}" 
                                     value="{{$data->id}}" {{!empty($saleValue->id) && $saleValue->outlet_id == $data->id ? 'selected'  : '' }}> {{$data->name}}
                                 </option>
                             @endforeach
@@ -66,6 +67,7 @@
                                 @if(!empty($saleValue))
                                     @php
                                         $getOutlet = App\Outlet::where('id', $saleValue->outlet_id)->first();
+                                        $getDistributor = App\Distributor::where('id', $getOutlet->distributor_id)->first();
                                     @endphp
                                 @endif
 
@@ -79,15 +81,20 @@
                                         {{!empty($saleValue) ? 'Mobile: '.$getOutlet->mobile : '' }}
                                     </span> 
                                 </div>
+                                <div class="font-weight-bold"> 
+                                    <span class="outlet-distributor">
+                                        {{!empty($saleValue) && !empty($getDistributor) ? 'Distributor: '.$getDistributor->name : '' }}
+                                    </span> 
+                                </div>
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    {{-- <div class="col-md-4">
                         <div class="form-group">
                             <label for="">DB Name</label>
                             <input type="text" class="form-control" name="db_name" value="{{!empty($saleValue->id) ? $saleValue->db_name : '' }}" required>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="">Delivery Date</label>
@@ -324,6 +331,10 @@
         $('.outlet-mobile')
         .text(
         $(this).find(':selected').data('mobile')
+        );
+        $('.outlet-distributor')
+        .text(
+        $(this).find(':selected').data('distributor')
         );
     });
 </script>

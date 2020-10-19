@@ -35,20 +35,26 @@
                         <label for="">Outlet</label>
                             @php
                                 $getOutlet = App\Outlet::where('id', $data->outlet_id)->first();
+                                $getDistributor = App\Distributor::where('id', $getOutlet->distributor_id)->first();
                             @endphp
                         <input type="text" class="form-control" value="{{$getOutlet->name}}" disabled>
                         <div class="p-3 bg-white text-dark text-md">
                                 <div class="font-weight-bold">Address: <span class="outlet-address">{{$getOutlet->address}}</span> </div>
                                 <div class="font-weight-bold">Mobile: <span class="outlet-mobile">{{$getOutlet->mobile}}</span> </div>
+                                <div class="font-weight-bold"> 
+                                    <span class="outlet-distributor">
+                                        {{ !empty($getDistributor) ? 'Distributor: '.$getDistributor->name : '' }}
+                                    </span> 
+                                </div>
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    {{-- <div class="col-md-4">
                         <div class="form-group">
                             <label for="">DB Name</label>
                             <input type="text" class="form-control" name="db_name" value="{{$data->db_name }}" disabled>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="">Delivery Date</label>

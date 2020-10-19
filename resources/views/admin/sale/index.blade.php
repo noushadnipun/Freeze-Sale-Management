@@ -56,7 +56,14 @@ Sevices
                             {{$thisOutlet->address}} <br>
                             {{$thisOutlet->mobile}}
                         </td>
-                        <td>{{$data->db_name}}</td>
+                        <td>
+                            @php
+                                $thisDistributor = App\Distributor::where('id', $thisOutlet->distributor_id)->first();
+                            @endphp
+                            @if(!empty($thisDistributor))
+                                {{$thisDistributor->name}}
+                            @endif
+                        </td>
                         @php
                             $thisSaleItem = App\SaleItem::where('sales_id', $data->id)->get();
                         @endphp
