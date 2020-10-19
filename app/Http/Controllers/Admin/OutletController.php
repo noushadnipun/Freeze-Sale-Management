@@ -13,7 +13,10 @@ class OutletController extends Controller
         $getOutlet = Outlet::orderBy('id', 'DESC')->get();
         if(!empty($id)){
             $editOutlet = Outlet::find($id);
+        }else{
+            $editOutlet = '';
         }
+
         return view('admin.outlet.index', compact('getOutlet', 'editOutlet'));
     }
 
