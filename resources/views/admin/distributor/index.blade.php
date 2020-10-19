@@ -1,17 +1,19 @@
 @extends('admin.layouts.master')
 
 @section('site-title')
- Products
+    Distributors
 @endsection
 
 @section('page-content')
+
     @include('admin.includes.message')
+
     <div class="row">
         <div class="col-md-4">
-            <form action="{{ (!empty($editService)) ? route('admin_service_update') :  route('admin_service_store') }}" method="POST">
+            <form action="{{ (!empty($editDistributor)) ? route('admin_distributor_update') : route('admin_distributor_store') }}" method="POST">
                 @csrf
-                @if(!empty($editService))
-                    <input type="hidden" name="id" value="{{$editService->id}}">
+                @if(!empty($editDistributor))
+                    <input type="hidden" name="id" value="{{$editDistributor->id}}">
                 @endif
                 <div class="card card-purple card-outline">
                     <div class="card-header">
@@ -19,12 +21,16 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group">
-                            <label for="outletName">Service Name</label>
-                            <input type="text" name="name" class="form-control" id="outletName" placeholder="Enter name" value="{{ (!empty($editService)) ? $editService->name : '' }}" required>
+                            <label for="outletName">Distributor Name</label>
+                        <input type="text" name="name" class="form-control" id="outletName" placeholder="Enter name" value="{{ (!empty($editDistributor)) ? $editDistributor->name : '' }}" required>
                         </div>
                         <div class="form-group">
-                            <label for="outletAddess">Rate</label>
-                            <input type="text" name="rate" class="form-control" id="outletAddess" placeholder="Enter Rate" value="{{ (!empty($editService)) ? $editService->rate : '' }}" required>
+                            <label for="outletMobile">Cell No</label>
+                            <input type="text" name="mobile" class="form-control" id="outletMobile" placeholder="Enter Mobile" value="{{ (!empty($editDistributor)) ? $editDistributor->mobile : '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="outletAddess">Description</label>
+                            <input type="text" name="description" class="form-control" id="outletAddess" placeholder="Enter Address" value="{{ (!empty($editDistributor)) ? $editDistributor->description : '' }}">
                         </div>
                     </div>
                     <div class="card-footer">
@@ -36,7 +42,7 @@
         <div class="col-md-8">
             <div class="card card-primary card-outline">
             <div class="card-header">
-              <h3 class="card-title">All Product Records</h3> <a href="{{ route('admin_service') }}" class=" ml-1 btn-xs btn-success" title="Add New">  <i class="fa fa-plus"></i></a>
+            <h3 class="card-title">All Distributor Records </h3> <a href="{{ route('admin_distributor') }}" class=" ml-1 btn-xs btn-success" title="Add New">  <i class="fa fa-plus"></i></a>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
@@ -45,19 +51,22 @@
                 <tr>
                   <th>SL</th>
                   <th>Name</th>
-                  <th>Rate</th>
+                  <th>Cell No</th>
+                  <th>Description(s)</th>
                   <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
-                <?php foreach($getService as $key => $data)  {?>
+                <?php foreach($getDistributor as $key => $data)  {?>
                 <tr>
-                    <td>{{ ++$key }}</td>
+                    <td>{{ ++$key  }}</td>
                     <td>{{$data->name}}</td>
-                    <td>{{$data->rate}}</td>
+                    <td> {{$data->mobile}}</td>
+                    <td>{{$data->description}}</td>
                     <td>
-                        <a href="{{route('admin_service_edit', $data->id)}}" class="btn-sm btn-success" title="Edit"><i class="fa fa-pen"></i></a>  
-                        <a href="{{route('admin_service_delete', $data->id)}}" class="btn-sm btn-danger" onclick="return confirm('Are you sure want to Delete?')" title="Delete"><i class="fa fa-trash"></i></a>
+                        <a href="{{route('admin_distributor_outlet', $data->id)}}" class="btn-sm btn-warning" title="View"><i class="fa fa-eye"></i></a>
+                        <a href="{{route('admin_distributor_edit', $data->id)}}" class="btn-sm btn-success" title="Edit"><i class="fa fa-pen"></i></a>  
+                        <a href="{{route('admin_distributor_delete', $data->id)}}" class="btn-sm btn-danger" onclick="return confirm('Are you sure want to Delete?')" title="Delete"><i class="fa fa-trash"></i></a>
                     </td>
                 </tr>
                 <?php } ?>

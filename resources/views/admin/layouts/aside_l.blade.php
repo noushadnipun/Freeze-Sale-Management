@@ -13,23 +13,37 @@
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column text-sm xnav-legacy nav-compact nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
             <li class="nav-item">
-            <a href="{{route('admin_outlet')}}" class="nav-link {{ Request()->routeIs('admin_outlet') ? 'active' : ' ' }}">
+            <a href="{{route('admin_index')}}" class="nav-link {{ Request()->routeIs('admin_index') ? 'active' : ' ' }}">
+                    <i class="nav-icon fas fa-tachometer-alt text-sm"></i>
+                    <p> Dashboard </p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{route('admin_distributor')}}" class="nav-link {{ Request()->routeIs('admin_distributor', 'admin_distributor_outlet') ? 'active' : ' ' }}">
                     <i class="nav-icon fas fa-th text-sm"></i>
+                    <p> Distributors </p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{route('admin_outlet')}}" class="nav-link {{ Request()->routeIs('admin_outlet', 'admin_outlet_service') ? 'active' : ' ' }}">
+                    <i class="nav-icon fas fa-store text-sm"></i>
                     <p> Outlets </p>
                 </a>
             </li>
             <li class="nav-item">
             <a href="{{route('admin_service')}}" class="nav-link {{ Request()->routeIs('admin_service') ? 'active' : ' ' }}">
-                    <i class="nav-icon fas fa-th text-sm"></i>
-                    <p> Services </p>
+                    <i class="nav-icon fas fa-baby-carriage text-sm"></i>
+                    <p> Products </p>
                 </a>
             </li>
 
-            <li class="nav-item has-treeview {{ Request()->routeIs('admin_sale_new', 'admin_sale') ? 'menu-open' : ' ' }}">
+            <li class="nav-item has-treeview menu-open {{ Request()->routeIs('admin_sale_new', 'admin_sale') ? 'menu-open' : ' ' }}">
               <a href="" class="nav-link {{ Request()->routeIs('admin_sale_new', 'admin_sale') ? 'active' : ' ' }}">
-                <i class="nav-icon fas fa-th text-sm"></i>
+                <i class="nav-icon fas fa-cogs text-sm"></i>
                 <p>
-                  Sale
+                  Services
                   <i class="right fas fa-angle-left"></i>
                 </p>
               </a>
@@ -37,17 +51,132 @@
                 <li class="nav-item">
                   <a href="{{route('admin_sale_new')}}" class="nav-link {{ Request()->routeIs('admin_sale_new') ? 'active' : ' ' }}">
                     <i class="nav-icon far fa-circle text-sm"></i>
-                    <p>New Sale</p>
+                    <p>New Services</p>
                   </a>
                 </li>
                 <li class="nav-item">
                   <a href="{{route('admin_sale')}}" class="nav-link {{ Request()->routeIs('admin_sale') ? 'active' : ' ' }}">
                     <i class="nav-icon far fa-circle text-sm"></i>
-                    <p>Manage Sale</p>
+                    <p>Manage Services</p>
                   </a>
                 </li>
               </ul>
             </li>
+
+
+
+            <li class="nav-item has-treeview menu-open">
+              <a href="" class="nav-link">
+                  <i class="nav-icon fas fa-users  text-sm"></i>
+                  <p>Users<i class="right fas fa-angle-left"></i></p>
+              </a>
+              <ul class="nav nav-treeview">   
+                <li class="nav-item">
+                  <a href="" class="nav-link">
+                    <i class="nav-icon far fa-circle text-sm"></i>
+                    <p>New User</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="" class="nav-link ">
+                    <i class="nav-icon far fa-circle text-sm"></i>
+                    <p>All Users</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            
+            
+          
+            
+            <li class="nav-item has-treeview menu-open">
+              <a href="" class="nav-link">
+                <i class="nav-icon fas fa-copy text-sm"></i>
+                <p>
+                  Reports
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview ">   
+              
+                <li class="nav-item">
+                  <a href="" class="nav-link">
+                    <i class="nav-icon far fa-circle text-sm"></i>
+                    <p>Service Summery</p>
+                  </a>
+                </li>
+                
+                
+                  <li class="nav-item">
+                  <a href="" class="nav-link">
+                    <i class="nav-icon far fa-circle text-sm"></i>
+                    <p>Date Wise Service</p>
+                  </a>
+                </li>
+                
+                
+                  <li class="nav-item">
+                  <a href="" class="nav-link">
+                    <i class="nav-icon far fa-circle text-sm"></i>
+                    <p>DB Wise Service</p>
+                  </a>
+                </li>
+                
+                
+                
+              </ul>
+            </li>
+            
+            
+            
+            
+            
+            
+            
+            
+                  <li class="nav-item has-treeview menu-open">
+              <a href="" class="nav-link">
+                <i class="nav-icon fas fa-tools text-sm"></i>
+                <p>
+                 Company Settings
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">   
+              
+                <li class="nav-item">
+                  <a href="" class="nav-link">
+                    <i class="nav-icon far fa-circle text-sm"></i>
+                    <p>Genarel Settings</p>
+                  </a>
+                </li>
+                
+                
+                  <li class="nav-item">
+                  <a href="" class="nav-link">
+                    <i class="nav-icon far fa-circle text-sm"></i>
+                    <p>Logo Settings</p>
+                  </a>
+                </li>
+                
+        
+              </ul>
+            </li>
+            
+      
+                <li class="nav-item">
+            <a href="//nextzen.com.bd/software-services/"  target="_blank" class="nav-link">
+                    <i class="nav-icon fas fa-blender-phone"></i>
+                    <p> IOT Integrated </p>
+                </a>
+            </li>
+
+
+             <div style="background: #02067a; text-align: center; width: 240px; position: fixed; bottom: 0;">
+                <img src="https://nextzen.com.bd/storage/2015/12/nextzen_blue.png" alt="Nextzen Limited" style="
+                        filter: brightness(0) invert(1); width: 103px; padding: 6px 0 6px 0px;" class="mCS_img_loaded">
+            
+              </div>
 
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->

@@ -1,4 +1,7 @@
 @extends('admin.layouts.master')
+@section('site-title')
+Outlets
+@endsection
 @section('page-content')
 
     @include('admin.includes.message')
@@ -27,6 +30,19 @@
                             <label for="outletMobile">Cell No</label>
                             <input type="text" name="mobile" class="form-control" id="outletMobile" placeholder="Enter Mobile" value="{{ (!empty($editOutlet)) ? $editOutlet->mobile : '' }}" required>
                         </div>
+                        <div class="form-group">
+                            <label for="outletMobile"> Distributor</label>
+                            <select name="distributor_id" id="" class="form-control">
+                                <option value="">Select</option>
+                                @php
+                                    $showDistributorList = App\Distributor::get();
+                                @endphp
+                                @foreach ($showDistributorList as $data)
+                                    <option value="{{$data->id}}" {{ (!empty($editOutlet)) && $editOutlet->distributor_id == $data->id ? 'selected' : '' }} >{{ $data->name }}</option>
+                                @endforeach
+                                
+                            </select>
+                        </div>
                     </div>
                     <div class="card-footer">
                         <button type="submit" class="btn bg-purple">Submit</button>
@@ -48,6 +64,7 @@
                   <th>Name</th>
                   <th>Address(s)</th>
                   <th>Cell No</th>
+                  <th>Distributor</th>
                   <th>Action</th>
                 </tr>
                 </thead>
@@ -58,7 +75,16 @@
                     <td>{{$data->name}}</td>
                     <td>{{$data->address}}</td>
                     <td> {{$data->mobile}}</td>
+                    <td> 
+                        @php
+                            $thisDistributor = App\Distributor::where('id', $data->distributor_id)->first();
+                        @endphp
+                        @if(!empty($thisDistributor))
+                            {{$thisDistributor->name}}
+                        @endif
+                    </td>
                     <td>
+                        <a href="{{route('admin_outlet_service', $data->id)}}" class="btn-sm btn-warning" title="View"><i class="fa fa-eye"></i></a>
                         <a href="{{route('admin_outlet_edit', $data->id)}}" class="btn-sm btn-success" title="Edit"><i class="fa fa-pen"></i></a>  
                         <a href="{{route('admin_outlet_delete', $data->id)}}" class="btn-sm btn-danger" onclick="return confirm('Are you sure want to Delete?')" title="Delete"><i class="fa fa-trash"></i></a>
                     </td>

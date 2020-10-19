@@ -1,5 +1,8 @@
 @extends('admin.layouts.master')
 
+@section('site-title')
+    New Services
+@endsection
 
 @section('page-content')
 

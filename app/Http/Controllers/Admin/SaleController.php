@@ -53,6 +53,7 @@ class SaleController extends Controller
                //dd($data2);
             }
         }
+        return redirect()->route('admin_sale')->with('success', 'Added Successfully.'); 
     }
 
     //

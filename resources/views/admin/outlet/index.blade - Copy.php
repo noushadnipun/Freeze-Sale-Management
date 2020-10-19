@@ -1,4 +1,7 @@
 @extends('admin.layouts.master')
+@section('site-title')
+
+@endsection
 @section('page-content')
     @if(Session::get('success') == true)
         <div class="alert alert-success" role="alert">

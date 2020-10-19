@@ -1,5 +1,30 @@
+<style>
+    a {
+    color: #49477f;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.mt-2, .my-2 {
+    margin-top: .5rem!important;
+    padding-bottom: 90px;
+}
+</style>
+
+
+<a href="{{url('/')}}/admin/sale/create"><span style="background: #e4e2ff; padding: 5px; border-radius: 4px; font-weight: 600;margin: 0 10px 0px 0; ">New Service Entry <i class="fa fa-plus" style=" background: #9695b5; border-radius: 50%;
+padding: 3px 3px 0px 2px; width: 18px; height: 18px; text-align: center; color: white; font-size: 12px;"></i> <span></a>
+
+<a href="{{url('/')}}/admin/outlate">
+<span style=" background: #e4e2ff; padding: 5px; border-radius: 4px; font-weight: 600; margin: 0 10px 0px 0; ">New Outlet <i class="fa fa-plus" style="background: #9695b5; border-radius: 50%; padding: 3px 3px 0px 2px; width: 18px;height: 18px; text-align: center; color: white; font-size: 12px; "></i> </span></a>
+
+<a href="{{url('/')}}/admin/service">
+<span style=" background: #e4e2ff; padding: 5px; border-radius: 4px; font-weight: 600;  margin: 0 10px 0px 0; ">New Products <i class="fa fa-plus" style=" background: #9695b5; border-radius: 50%; padding: 3px 3px 0px 2px;  width: 18px; height: 18px; text-align: center; color: white; font-size: 12px;"></i> </span></a>
+
 <ul class="navbar-nav ml-auto">
-  
+    <li class="nav-item nav-link text-success">
+        <a class="" href="https://nextzen.com.bd/contact-us" target="_blank"><i class="fa fa-info"></i> Help</a>   
+    </li>
     <li class="nav-item dropdown">
       <a class="nav-link text-success" data-toggle="dropdown" href="#">
         <i class="far fa-user"></i> {{ Auth::user()->name }}
