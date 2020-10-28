@@ -10,71 +10,54 @@
 
     <div class="row">
         <div class="col-md-4">
-            <form action="{{ (!empty($editDistributor)) ? route('admin_distributor_update') : route('admin_distributor_store') }}" method="POST">
-                @csrf
-                @if(!empty($editDistributor))
-                    <input type="hidden" name="id" value="{{$editDistributor->id}}">
-                @endif
-                <div class="card card-purple card-outline">
-                    <div class="card-header">
-                        <h3 class="card-title">Add/Edit</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group">
+            <div id="dataform">
+                <form action="{{ route('admin_distributor_store') }}" method="POST" id="form-submit" class="ni">
+                    @csrf
+                    <div class="card card-purple card-outline">
+                        <div class="card-header">
+                            <h3 class="card-title">Add</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
                             <label for="outletName">Distributor Name</label>
-                        <input type="text" name="name" class="form-control" id="outletName" placeholder="Enter name" value="{{ (!empty($editDistributor)) ? $editDistributor->name : '' }}" required>
+                            <input type="text" name="name" id="name" class="form-control" placeholder="Enter name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="outletMobile">Cell No</label>
+                                <input type="text" name="mobile" id="mobile" class="form-control" placeholder="Enter Mobile">
+                            </div>
+                            <div class="form-group">
+                                <label for="outletAddess">Description</label>
+                                <input type="text" name="description" id="description" class="form-control" placeholder="Enter Address">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="outletMobile">Cell No</label>
-                            <input type="text" name="mobile" class="form-control" id="outletMobile" placeholder="Enter Mobile" value="{{ (!empty($editDistributor)) ? $editDistributor->mobile : '' }}">
-                        </div>
-                        <div class="form-group">
-                            <label for="outletAddess">Description</label>
-                            <input type="text" name="description" class="form-control" id="outletAddess" placeholder="Enter Address" value="{{ (!empty($editDistributor)) ? $editDistributor->description : '' }}">
+                        <div class="card-footer">
+                            <button type="submit" class="btn bg-purple store-data-btn">Submit</button>
                         </div>
                     </div>
-                    <div class="card-footer">
-                        <button type="submit" class="btn bg-purple">Submit</button>
-                    </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div><!-- End Col  4 -->
         <div class="col-md-8">
             <div class="card card-primary card-outline">
             <div class="card-header">
-            <h3 class="card-title">All Distributor Records </h3> <a href="{{ route('admin_distributor') }}" class=" ml-1 btn-xs btn-success" title="Add New">  <i class="fa fa-plus"></i></a>
+                <div class="d-flex justify-content-between">
+                    <div>
+                       <h3 class="card-title">All Distributor Records </h3> <a href="{{ route('admin_distributor') }}" class=" ml-1 btn-xs btn-success" title="Add New">  <i class="fa fa-plus"></i></a>
+                    </div> 
+
+                    <form action="" method="get" id='searchform'>
+                        @csrf
+                        <input type="text" name="search" id="search" class="form-control form-control-sm">
+                    </form>
+                </div>
             </div>
             <!-- /.card-header -->
-            <div class="card-body">
-              <table id="customDataTable" class="table table-bordered table-hover table-head-fixed">
-                <thead>
-                <tr>
-                  <th>SL</th>
-                  <th>Name</th>
-                  <th>Cell No</th>
-                  <th>Description(s)</th>
-                  <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php foreach($getDistributor as $key => $data)  {?>
-                <tr>
-                    <td>{{ ++$key  }}</td>
-                    <td>{{$data->name}}</td>
-                    <td> {{$data->mobile}}</td>
-                    <td>{{$data->description}}</td>
-                    <td>
-                        <a href="{{route('admin_distributor_outlet', $data->id)}}" class="btn-sm btn-warning" title="View"><i class="fa fa-eye"></i></a>
-                        <a href="{{route('admin_distributor_edit', $data->id)}}" class="btn-sm btn-success" title="Edit"><i class="fa fa-pen"></i></a>  
-                        <a href="{{route('admin_distributor_delete', $data->id)}}" class="btn-sm btn-danger" onclick="return confirm('Are you sure want to Delete?')" title="Delete"><i class="fa fa-trash"></i></a>
-                    </td>
-                </tr>
-                <?php } ?>
-                </tbody>
-                <tfoot>
+            <div class="card-body" id="showdata">
+              
                 
-                </tfoot>
-              </table>
+                
+              
             </div>
             <!-- /.card-body -->
           </div>
@@ -84,6 +67,182 @@
 @endsection
 
 @section('cusjs')
+    <script>
+         $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $(document).ready(function(){
+            let msg = $('#ajaxMsg');
+            function fadeOut(){
+                $(msg).delay(1200).fadeIn(200);
+                $(msg).delay(1200).fadeOut(500);
+            }
+
+
+            //Showdata
+            function getRecord(){
+                $.ajax({
+                    type: "GET",
+                    url: "{{route('admin_distributor_data')}}",
+                    success: function (data) {
+                        //console.log(data)
+                        $('#showdata').empty().append(data);
+                        paginate("{{route('admin_distributor_data')}}")
+                    }
+                });
+            }
+            getRecord();
+
+            // Data Store Form
+            
+            //Edit Data View
+            $('#showdata').on('click', ".edit-data-btn", function(e){
+                e.preventDefault();
+                var id = $(this).data('target');
+                $.ajax({
+                    type: "GET",
+                    url: "{{route('admin_distributor_edit', '')}}/"+id,
+                    success: function (data) {
+                        //alert(data)
+                        $('#dataform').empty().append(data);
+                        getRecord();
+                    },
+                });
+            })
+            //Data Store add Update
+            
+            //Update Data
+            $('#dataform').on('click', '.update-data-btn',  function(e){
+                e.preventDefault();
+                var id = $('input#id').val();
+                var token = '{{ csrf_token() }}';
+                var name = $('input#name').val();
+                var mobile = $('input#mobile').val();
+                var description = $('input#description').val();
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ route('admin_distributor_update') }}",
+                    data:   {
+                        _token: token,
+                        id: id,
+                        name: name,
+                        mobile: mobile,
+                        description: description,
+                    },
+                    success: function(data){
+                        $(msg).empty().append('<div class="alert alert-success" role="alert">Data Updated Successfully</div>');
+                        fadeOut();
+                        //$('input').val('');
+                        getRecord();
+                    }
+                })
+                
+            })
+            //
+            //Delete Data
+            $('#showdata').on('click',".delete-data-btn", function(e){
+                e.preventDefault();
+                var id = $(this).data('target');
+                $.ajax({
+                    type: 'GET',
+                    url: "{{route('admin_distributor_delete', '')}}/"+id,
+                    success: function(data){
+                        $(msg).empty().append('<div class="alert alert-danger" role="alert">Data Deleted Successfully</div>');
+                        fadeOut();
+                        getRecord();
+                    }
+                })
+                    
+            })
+            //
+            
+            //Create data
+            $('#form-submit').on('submit', function(e){
+                e.preventDefault();
+
+                //console.log('success');
+                var token = '{{ csrf_token() }}';
+                var name = $('input#name').val();
+                var mobile = $('input#mobile').val();
+                var description = $('input#description').val();
+
+                //insert Dtata
+                $.ajax({
+                    type: 'post',
+                    url:   '{{ route('admin_distributor_store') }}',
+                    data:   {
+                        _token: token,
+                        name: name,
+                        mobile: mobile,
+                        description: description,
+                    },
+                    success: function(data){
+                        $(msg).empty().append('<div class="alert alert-success" role="alert">Data Added Successfully</div>');
+                        fadeOut();
+                        $('input').val('');
+                        getRecord();
+                    },
+                    error: function(data){
+                        alert("Error")
+                    } 
+                })
+
+            })
+
+            //
+
+            //Paginition
+            function paginate(arg){
+                $('#showdata').on('click', ".pagination a", function(e){
+                    e.preventDefault();
+                    let url = $(this).attr('href').split('page=')[1];
+                    $.ajax({
+                        type: "get",
+                        //"{{route('admin_distributor_data')}}?page="
+                        url: arg+"?page="+url,
+                        success: function(data){
+                            $('#showdata').empty().append(data);
+                        },
+                    })
+                })
+            }
+            paginate();
+            
+            //
+
+            //Search
+            $('#searchform').on('keyup', function(){
+                var search = $('input#search').val()
+                //console.log(search);
+                var token = '{{ csrf_token() }}';
+                $.ajax({
+                    type: "GET",
+                    url: "{{route('admin_distributor_search')}}",
+                    data: {
+                        search : search,
+                        _token: token,
+                    },
+                    success: function(data){
+                        // console.log(data)
+                        if(search){
+                            $('#showdata').empty().html(data);
+                            paginate("{{route('admin_distributor_search')}}");
+                            //console.log(data.length)
+                        } else {
+                            getRecord() 
+                        }
+                    }
+                })
+            })
+            
+
+        })
+    </script>
+
+    <?php /*
     <link rel="stylesheet" href="{{asset('public/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
     <link rel="stylesheet" href="{{asset('public/admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
     <script src="{{asset('public/admin/plugins/datatables/jquery.dataTables.min.js')}}"></script>
@@ -105,4 +264,5 @@
         });
     });
     </script>
+    */?>
 @endsection

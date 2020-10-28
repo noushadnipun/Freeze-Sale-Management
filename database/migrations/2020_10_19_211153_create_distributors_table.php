@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDistributorTable extends Migration
+class CreateDistributorsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateDistributorTable extends Migration
      */
     public function up()
     {
-        Schema::create('distributor', function (Blueprint $table) {
+        Schema::create('distributors', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('mobile')->nullable();

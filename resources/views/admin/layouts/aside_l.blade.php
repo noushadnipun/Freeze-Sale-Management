@@ -65,20 +65,14 @@
 
 
 
-            <li class="nav-item has-treeview menu-open">
-              <a href="" class="nav-link">
+            <li class="nav-item has-treeview menu-open {{ Request()->routeIs('admin_user_index') ? 'menu-open' : ' ' }}">
+              <a href="" class="nav-link {{ Request()->routeIs('admin_user_index') ? 'active' : ' ' }}">
                   <i class="nav-icon fas fa-users  text-sm"></i>
                   <p>Users<i class="right fas fa-angle-left"></i></p>
               </a>
               <ul class="nav nav-treeview">   
                 <li class="nav-item">
-                  <a href="" class="nav-link">
-                    <i class="nav-icon far fa-circle text-sm"></i>
-                    <p>New User</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="" class="nav-link ">
+                  <a href="{{route('admin_user_index')}}" class="nav-link {{ Request()->routeIs('admin_user_index') ? 'active' : ' ' }}">
                     <i class="nav-icon far fa-circle text-sm"></i>
                     <p>All Users</p>
                   </a>
@@ -87,7 +81,7 @@
             </li>
             
             
-          
+          <?php /*
             
             <li class="nav-item has-treeview menu-open">
               <a href="" class="nav-link">
@@ -163,7 +157,8 @@
               </ul>
             </li>
             
-      
+            */
+            ?>
                 <li class="nav-item">
             <a href="//nextzen.com.bd/software-services/"  target="_blank" class="nav-link">
                     <i class="nav-icon fas fa-blender-phone"></i>

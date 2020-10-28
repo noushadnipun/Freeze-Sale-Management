@@ -19,71 +19,68 @@
             @endif
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label for="">Call No</label>
-                        <input type="text" class="form-control" name="call_no" autocomplete="off" value="{{!empty($saleValue->id) ? $saleValue->call_no : '' }}" required>
+                            <input type="text" class="form-control" name="call_no" autocomplete="off" value="{{!empty($saleValue->id) ? $saleValue->call_no : '' }}" required>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label for="">Call Date</label>
                             <input type="text" class="form-control" id="call_datepicker" name="call_date" value="{{!empty($saleValue->id) ? $saleValue->call_date : '' }}" required>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="form-group">
-                            <label for="">Visi ID</label>
-                            <input type="text" class="form-control" name="visi_id" value="{{!empty($saleValue->id) ? $saleValue->visi_id : '' }}" required>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="">Visi Size</label>
-                            <input type="text" class="form-control" name="visi_size" value="{{!empty($saleValue->id) ? $saleValue->visi_size : '' }}" required>
+                            <label for="">Delivery Date</label>
+                            <input type="text" class="form-control" id="delivery_datepicker" name="delivery_date" value="{{!empty($saleValue->id) ? $saleValue->delivery_date : '' }}">
                         </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-4">
-                        <label for="">Select Outlet</label>
-                        <select xid="locality-dropdown" name="outlet_id" data-live-search="true" class="selectpicker form-control showOutletInfo" data-size="10" required>
-                            @php
-                                $getOutlet = App\Outlet::get();
-                            @endphp
-                            <option selected="true" disabled>Choose Outlet</option>
-                            @foreach($getOutlet as $data)
-                                <option 
-                                    data-token="{{$data->name}}" 
-                                    data-mobile="<?php echo 'Mobile: '?>{{$data->mobile}}" 
-                                    data-address="<?php echo 'Address: '?>{{$data->address}}" 
-                                    data-distributor="<?php $dataDistrobutor = App\Distributor::where('id', $data->distributor_id)->first(); echo 'Distributor: '?>{{!empty($dataDistrobutor) ? $dataDistrobutor->name: ''}}" 
-                                    value="{{$data->id}}" {{!empty($saleValue->id) && $saleValue->outlet_id == $data->id ? 'selected'  : '' }}> {{$data->name}}
-                                </option>
-                            @endforeach
+                    <div class="col-md-3">
+                        <label for="">Choose Visi ID</label> 
+                        <a href="" class="addnewoutlet badge badge-warning float-right" data-toggle="modal" data-target="#exampleModal">Add New</a>
+
+                        <select id="showOutletRecord" name="outlet_id" sdata-live-search="true" class="sselectpicker form-control showOutletInfo" data-size="10" required>
+                            @if(!empty($saleValue->id))
+                                @php
+                                    $saleValueVisiID = App\Outlet::where('id', $saleValue->outlet_id)->first();
+                                @endphp
+                                @if(!empty($saleValueVisiID))
+                                    <option value="{{$saleValueVisiID->id}}" class="text-white bg-success" selected>{{$saleValueVisiID->visi_id}}</option>
+                                @endif
+                            @else
+                                
+                            @endif
                         </select>
+                        
+                        <div id="modalOutletform"></div>
                         <div class="p-3 bg-white text-dark text-md">
 
                                 @if(!empty($saleValue))
                                     @php
                                         $getOutlet = App\Outlet::where('id', $saleValue->outlet_id)->first();
-                                        $getDistributor = App\Distributor::where('id', $getOutlet->distributor_id)->first();
+                                        if(!empty($getOutlet)){
+                                            $getDistributor = App\Distributor::where('id', $getOutlet->distributor_id)->first();
+                                        }
                                     @endphp
                                 @endif
 
                                 <div class="font-weight-bold"> 
                                     <span class="outlet-address">
-                                        {{!empty($saleValue) ? 'Address: '.$getOutlet->address : '' }}
+                                        {{!empty($saleValue) && $getOutlet ? 'Address: '.$getOutlet->address : '' }}
                                     </span> 
                                 </div>
                                 <div class="font-weight-bold"> 
                                     <span class="outlet-mobile">
-                                        {{!empty($saleValue) ? 'Mobile: '.$getOutlet->mobile : '' }}
+                                        {{!empty($saleValue) && $getOutlet ? 'Mobile: '.$getOutlet->mobile : '' }}
                                     </span> 
                                 </div>
                                 <div class="font-weight-bold"> 
                                     <span class="outlet-distributor">
-                                        {{!empty($saleValue) && !empty($getDistributor) ? 'Distributor: '.$getDistributor->name : '' }}
+                                        
                                     </span> 
                                 </div>
                         </div>
@@ -95,10 +92,37 @@
                             <input type="text" class="form-control" name="db_name" value="{{!empty($saleValue->id) ? $saleValue->db_name : '' }}" required>
                         </div>
                     </div> --}}
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
-                            <label for="">Delivery Date</label>
-                            <input type="text" class="form-control" id="delivery_datepicker" name="delivery_date" value="{{!empty($saleValue->id) ? $saleValue->delivery_date : '' }}">
+                            <label for="">Visi Size</label>
+
+                                @if(!empty($saleValue->id))
+                                    @php
+                                    $saleValueOutletID = App\Outlet::where('id', $saleValue->outlet_id)->first();
+                                    @endphp
+                                @endif
+                            <input type="text" class="form-control outlet-visi-size" name="" value="{{!empty($saleValue->id) && $saleValueOutletID ? $saleValueOutletID->visi_size : '' }}" required disabled>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="">Distributor</label>
+                            @if(!empty($saleValue->id))
+                                @php
+                                $saleValueDistributorID = App\Distributor::where('id', $saleValueOutletID->distributor_id)->first();
+                                @endphp
+                            @endif
+                            <input type="hidden" class="form-control outlet-distributor-id" xname="db_id" value="{{!empty($saleValue->id) && $saleValueDistributorID ? $saleValueDistributorID->id : '' }}" required>
+
+                            <input type="text" class="form-control outlet-distributor"  value="{{!empty($saleValue->id) && $saleValueDistributorID ? $saleValueDistributorID->name : '' }}" required disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="">Outlet Name</label>
+                            <input type="hidden" class="form-control outlet-id" name="outlet_id" value="{{!empty($saleValue->id) && $saleValueOutletID ? $saleValueOutletID->id : '' }}" required>
+                            <input type="text" class="form-control outlet-name" name="" value="{{!empty($saleValue->id) && $saleValueOutletID ? $saleValueOutletID->name : '' }}" required disabled>
                         </div>
                     </div>
 
@@ -118,6 +142,7 @@
                             </th>
                         </tr>
                     </thead>
+
                     <tbody>
                         @if(!empty($saleValue->id))
                             {{-- Update Form  --}}
@@ -139,7 +164,7 @@
                                                     <select class="form-control selectpicker" name="service_id[]" id="productName<?php echo $x; ?>" onchange="getProductData(<?php echo $x; ?>)" data-live-search="true" data-size="8" required>
                                                         <option value="">~~SELECT~~</option>
                                                         <?php
-                                                            $productData = App\Service::get();
+                                                            $productData = App\Service::orderBy('id', 'DESC')->get();
 
                                                             foreach($productData as $row) { ?>									 		
                                                                 <option value="{{ $row['id'] }}" id="changeProduct{{$row['id']}}" {{ $row['id'] == $data->service_id ? 'selected' : '' }} >{{$row['name']}}</option>
@@ -187,7 +212,7 @@
                                         <select class="form-control selectpicker" name="service_id[]" id="productName<?php echo $x; ?>" onchange="getProductData(<?php echo $x; ?>)" data-live-search="true" data-size="8" required>
                                             <option value="">~~SELECT~~</option>
                                             <?php
-                                                $productData = App\Service::get();
+                                                $productData = App\Service::orderBy('id', 'DESC')->get();
 
                                                 foreach($productData as $row) {									 		
                                                     echo "<option value='".$row['id']."' id='changeProduct".$row['id']."'>".$row['name']."</option>";
@@ -221,7 +246,8 @@
                         //End Create Form
                         ?>
                         @endif  
-                    </tbody>			  	
+                    </tbody>
+                    
                 </table>
                 
                 <div class="row clearfix float-right" style="margin-right: 10%;">
@@ -231,7 +257,7 @@
                                 <tr class="d-none">
                                     <th class="text-center p-3">Sub Total</th>
                                     <td class="text-center p-3">
-                                        <input type="text" class="form-control" id="subTotal" name="subTotal" disabled="true" />
+                                        <input type="text" class="form-control" id="subTotal" name="subTotal" disabled="true"/>
                                         <input type="hidden" class="form-control" id="subTotalValue" name="subTotalValue" />
                                     </td>
                                 </tr>
@@ -243,7 +269,7 @@
                                     </td>
                                 </tr>
 
-                                <tr>
+                                <tr class="d-none">
                                     <th class="text-center p-3">Total Amount</th>
                                     <td class="text-center p-3">
                                         <input type="text" class="form-control" id="totalAmount" name="totalAmount" disabled="true" value="{{!empty($saleValue->id) ? $saleValue->grand_total + $saleValue->discount : '' }}" />
@@ -251,26 +277,26 @@
                                     </td>
                                 </tr>
 
-                                <tr>
+                                <tr class="d-none">
                                     <th class="text-center p-3">Discount</th>
                                     <td class="text-center p-3">
-                                        <input type="text" class="form-control" id="discount" name="discount" onkeyup="discountFunc()" autocomplete="off" value="{{!empty($saleValue->id) ? $saleValue->discount : '' }}" required/>
+                                        <input type="text" class="form-control" id="discount" name="discount" onkeyup="discountFunc()" autocomplete="off" value="{{!empty($saleValue->id) ? $saleValue->discount : '' }}"/>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th class="text-center p-3">Grand Total</th>
                                     <td class="text-center p-3">
                                         <input type="text" class="form-control" id="grandTotal" name="grandTotal" disabled="true" value="{{!empty($saleValue->id) ? $saleValue->grand_total : '' }}"/>
-                                    <input type="hidden" class="form-control" id="grandTotalValue" name="grand_total" value="{{!empty($saleValue->id) ? $saleValue->grand_total : '' }}" />
+                                        <input type="hidden" class="form-control" id="grandTotalValue" name="grand_total" value="{{!empty($saleValue->id) ? $saleValue->grand_total : '' }}" />
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr class="d-none">
                                     <th class="text-center p-3">Paid Amount</th>
                                     <td class="text-center p-3">
-                                        <input type="text" class="form-control" id="paid" name="paid_amount" autocomplete="off" onkeyup="paidAmount()" autocomplete="off" value="{{!empty($saleValue->id) ? $saleValue->paid_amount : '' }}" required/>
+                                        <input type="text" class="form-control" id="paid" name="paid_amount" autocomplete="off" onkeyup="paidAmount()" autocomplete="off" value="{{!empty($saleValue->id) ? $saleValue->paid_amount : '' }}"/>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr class="d-none">
                                     <th class="text-center p-3">Due Amount</th>
                                     <td class="text-center p-3">
                                         <input type="text" class="form-control" id="due" name="due" disabled="true" value="{{!empty($saleValue->id) ? $saleValue->grand_total - $saleValue->paid_amount : '' }}" />
@@ -303,44 +329,110 @@
 
 @section('cusjs')
 
+
 <script>
-    /*
-    let dropdown = $('#locality-dropdown');
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 
-    dropdown.empty();
+    $(document).ready(function(){
+        
+        //show Outlet Record
+        function showOutletRecord(){
+            $.ajax({
+                type: "GET",
+                url: "{{route('admin_sale_outlet_record')}}",
+                success: function(data){
+                    $('#showOutletRecord').append(data)
+                }
+            })
+        }
+        showOutletRecord()
 
-    dropdown.append('<option selected="true" disabled>Choose State/Province</option>');
-    dropdown.prop('selectedIndex', 0);
-
-    const url = "{{route('api_service')}}";
-
-    // Populate dropdown with list of provinces
-    $.getJSON(url, function (data) {
-    $.each(data, function (key, entry) {
-        dropdown.append($('<option data-token="'+entry.name+'" data-mobile="'+entry.mobile+'" data-address="'+entry.address+'"></option>').attr('value', entry.id).text([entry.name]));
+        //Form New Outlet Add
+        $('.addnewoutlet').click(function(e){
+            e.preventDefault();
+            $(this).data('toggle');
+            $.ajax({
+                type: "GET",
+                url: "{{route('admin_sale_outlet_modal_form')}}",
+                success: function(data){
+                    $('#modalOutletform').append(data)
+                }
+            })
+        })
+        //Action Outlet modal Form
+        function fadeOut(){
+            $("#msg").delay(1200).fadeIn(400);
+            $("#msg").delay(1200).fadeOut(500);
+        }
+        $('#modalOutletform').on('submit', '#modalOutletNew', function(event){
+            event.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url:  "{{route('admin_outlet_store')}}",
+                data: $('#modalOutletNew').serialize(),
+                success: function(data){
+                    $("#modalOutletNew input").val("")
+                    $('#showOutletRecord').empty()
+                    showOutletRecord()
+                    $("#msg").empty().append('<div class="alert alert-success" role="alert">New outlet Added Successfully</div>');
+                    //$('#exampleModal').modal('hide');
+                    fadeOut();
+                }
+            })
+        })
+        //
+        
     })
-    });
-    */
-
-    //SHow Out Let info After Select
-    $('.showOutletInfo').on('change', function() {
-        $('.outlet-address')
-        .text(
-            $(this).find(':selected').data('address')
-        );
-        $('.outlet-mobile')
-        .text(
-        $(this).find(':selected').data('mobile')
-        );
-        $('.outlet-distributor')
-        .text(
-        $(this).find(':selected').data('distributor')
-        );
-    });
 </script>
 
 
 <script>
+    
+    //SHow Out Let info After Select
+   
+    function outletAllData(){
+            $('.showOutletInfo').on('change', function() {
+            $('.outlet-id')
+            .val(
+                $(this).find(':selected').data('outlet-id')
+            );
+            $('.outlet-name')
+            .val(
+                $(this).find(':selected').data('outlet-name')
+            );
+            $('.outlet-address')
+            .text(
+                $(this).find(':selected').data('address')
+            );
+            $('.outlet-mobile')
+            .text(
+            $(this).find(':selected').data('mobile')
+            );
+            $('.outlet-distributor')
+            .val(
+            $(this).find(':selected').data('distributor')
+            );
+            $('.outlet-distributor-id')
+            .val(
+            $(this).find(':selected').data('distributor-id')
+            );
+            $('.outlet-visi-size')
+            .val(
+            $(this).find(':selected').data('visi-size')
+            );
+        });
+    }
+    outletAllData()
+    
+</script>
+
+
+<script>
+    
     //Add Row All Function
 
     function addRow() {
@@ -452,7 +544,7 @@
 
             } else {
                 $.ajax({
-                    url: '{{route("api_service")}}',
+                    url: '{{route("api_service_id", "")}}/'+productId,
                     type: 'get',
                     data: {productId : productId},
                     dataType: 'json',
@@ -460,12 +552,12 @@
                         // setting the rate value into the rate input field
                         //console.log(response[productId]['rate']);
                         //console.log(response[productId]);
-                        $("#rate"+row).val(response[productId-1].rate);
+                        $("#rate"+row).val(response.rate);
                         $("#rateValue"+row).val(response.rate);
 
                         $("#quantity"+row).val(1);
 
-                        var total = Number(response[productId-1].rate) * 1;
+                        var total = Number(response.rate) * 1;
                         total = total.toFixed(2);
                         $("#total"+row).val(total);
                         $("#totalValue"+row).val(total);
@@ -510,7 +602,7 @@
             alert('no row !! please refresh the page');
         }
     }
-
+    
     function subAmount() {
         var tableProductLength = $("#productTable tbody tr").length;
         var totalSubAmount = 0;
@@ -527,13 +619,13 @@
         // sub total
         $("#subTotal").val(totalSubAmount);
         $("#subTotalValue").val(totalSubAmount);
-        /*
+        
         // vat
-        var vat = (Number($("#subTotal").val())/100) * 13;
-        vat = vat.toFixed(2);
-        $("#vat").val(vat);
-        $("#vatValue").val(vat);
-        */
+        //var vat = (Number($("#subTotal").val())/100) * 13;
+        //vat = vat.toFixed(2);
+        //$("#vat").val(vat);
+        //$("#vatValue").val(vat);
+        
         // total amount
         //var totalAmount = (Number($("#subTotal").val()) + Number($("#vat").val()));
         var totalAmount = (Number($("#subTotal").val()));
@@ -564,7 +656,8 @@
         } // else
 
     } // /sub total amount
-
+   
+   
     function discountFunc() {
         var discount = $("#discount").val();
         var totalAmount = Number($("#totalAmount").val());
@@ -616,8 +709,10 @@
         // remove form group error 
         $(".form-group").removeClass('has-success').removeClass('has-error');
     } // /reset order form
-</script>
 
+    
+    
+</script>
 
 
 <!-- Latest compiled and minified CSS -->

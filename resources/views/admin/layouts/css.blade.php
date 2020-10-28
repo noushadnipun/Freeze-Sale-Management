@@ -17,6 +17,7 @@
   <!-- summernote -->
   <link rel="stylesheet" href="{{asset('public/admin/plugins/summernote/summernote-bs4.css')}}">
 
+  
   {{-- <link rel="stylesheet" href="{{asset('public/admin/plugins/select2/css/select2.min.css')}}">
   <link rel="stylesheet" href="{{asset('public/admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}"> --}}
   <!-- Google Font: Source Sans Pro -->

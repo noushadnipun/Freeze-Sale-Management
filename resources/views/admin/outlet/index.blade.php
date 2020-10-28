@@ -19,8 +19,16 @@ Outlets
                     </div>
                     <div class="card-body">
                         <div class="form-group">
+                            <label for="outletName">Visi ID</label>
+                            <input type="text" name="visi_id" class="form-control" id="outletName" placeholder="Enter ID" value="{{ (!empty($editOutlet)) ? $editOutlet->visi_id : '' }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="outletName">Visi Size</label>
+                            <input type="text" name="visi_size" class="form-control" id="outletName" placeholder="Enter Size" value="{{ (!empty($editOutlet)) ? $editOutlet->visi_size : '' }}" required>
+                        </div>
+                        <div class="form-group">
                             <label for="outletName">Outlet Name</label>
-                        <input type="text" name="name" class="form-control" id="outletName" placeholder="Enter name" value="{{ (!empty($editOutlet)) ? $editOutlet->name : '' }}" required>
+                            <input type="text" name="name" class="form-control" id="outletName" placeholder="Enter name" value="{{ (!empty($editOutlet)) ? $editOutlet->name : '' }}" required>
                         </div>
                         <div class="form-group">
                             <label for="outletAddess">Outlet Address</label>
@@ -65,6 +73,8 @@ Outlets
                   <th>Address(s)</th>
                   <th>Cell No</th>
                   <th>Distributor</th>
+                  <th>Visi ID</th>
+                  <th>Visi Size</th>
                   <th>Action</th>
                 </tr>
                 </thead>
@@ -83,8 +93,10 @@ Outlets
                             {{$thisDistributor->name}}
                         @endif
                     </td>
+                    <td> {{$data->visi_id}}</td>
+                    <td> {{$data->visi_size}}</td>
                     <td>
-                        <a href="{{route('admin_outlet_service', $data->id)}}" class="btn-sm btn-warning" title="View"><i class="fa fa-eye"></i></a>
+                        <a href="{{route('admin_outlet_service', $data->id)}}" class="btn-sm btn-warning d-none" title="View"><i class="fa fa-eye"></i></a>
                         <a href="{{route('admin_outlet_edit', $data->id)}}" class="btn-sm btn-success" title="Edit"><i class="fa fa-pen"></i></a>  
                         <a href="{{route('admin_outlet_delete', $data->id)}}" class="btn-sm btn-danger" onclick="return confirm('Are you sure want to Delete?')" title="Delete"><i class="fa fa-trash"></i></a>
                     </td>

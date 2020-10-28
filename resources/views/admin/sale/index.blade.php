@@ -5,140 +5,208 @@ Sevices
 @endsection
 
 @section('page-content')
-
 @include('admin.includes.message')
 
 <div class="row">
     <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-body">
+                 <div class="pb-2 d-flex justify-content-between">
+                    <div>
+                        <label for="">Search</label>
+                        <form action="" method="get" id='searchform'>
+                            @csrf
+                            <input type="text" name="search" id="search" class="form-control form-control-sm">
+                        </form>
+                    </div>
+
+                    <div>
+                        <label for="">Filter By Outlets</label>
+                        <select name="" id="filterOutlet" class="form-control form-control-sm">
+                            @php
+                                $filterOutlet = App\Outlet::get();
+                            @endphp
+                            <option value="showall" selected>Show All</option>
+                            @foreach ($filterOutlet as $item)
+                                <option value="{{$item->id}}">{{$item->name}}</option>
+                            @endforeach 
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="">Filter By Distributor</label>
+                        <select name="" id="filterDistributor" class="form-control form-control-sm">
+                            @php
+                                $filterDistributor = App\Distributor::get();
+                            @endphp
+                            <option value="showall" selected>Show All</option>
+                            @foreach ($filterDistributor as $item)
+                                <option value="{{$item->id}}">{{$item->name}}</option>
+                            @endforeach 
+                        </select>
+                    </div>
+
+                    <div class="">
+                        <label>Filter By Date</label>
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="far fa-calendar-alt"></i>
+                                </span>
+                            </div>
+                            <input type="text" name="datefilter" class="form-control form-control-sm" id="reservation" autocomplete="off">
+                        </div>
+                        <!-- /.input group -->
+                    </div>
+                    <div>
+                        <label for="">Export As PDF</label>
+                        <a href="{{route('admin_sale_pdf')}}" target="_blank" class="btn btn-sm btn-success d-block">Export as pdf</a>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+
         <div class="card card-purple card-outline">
             <div class="card-header">
-              <h3 class="card-title">All Service Records</h3>
+                <h3 class="card-title">All Service Records</h3>
             </div>
             <!-- /.card-header -->
             <div class="card-body px-2 py-3">
-              <table id="customDataTable" class="table table-bordered table-hover table-head-fixed text-center table-responsive-sm table-sm">
-                <thead>
-                    <tr>
-                        <th>SL</th>
-                        <th>Call No</th>
-                        <th>Call Date</th>
-                        <th>Visi No</th>
-                        <th>Visi ID</th>
-                        <th>Outlet Name</th>
-                        <th>Outlet Address & cell No</th>
-                        <th>DB Name</th>
-                        <span colspan="4">
-                            <th>Work Details</th>
-                            <th>Qty</th>
-                            <th>Rate</th>
-                            <th>Taka</th>
-                        </span>
-                        <th>Total Amount</th>
-                        <th>Delivery Date</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php foreach($getSale as $key => $data)  {?>
-                    <tr>
-                        <td>{{ $key + $getSale->firstItem()}}</td>
-                        <td>{{$data->call_no}}</td>
-                        <td>{{$data->call_date}}</td>
-                        <td>{{$data->visi_id}}</td>
-                        <td>{{$data->visi_size}}</td>
-                        <td>
-                            @php
-                                $thisOutlet = App\Outlet::where('id', $data->outlet_id)->first();
-                            @endphp
-                            {{$thisOutlet->name}}
-                        </td>
-                        <td>
-                            {{$thisOutlet->address}} <br>
-                            {{$thisOutlet->mobile}}
-                        </td>
-                        <td>
-                            @php
-                                $thisDistributor = App\Distributor::where('id', $thisOutlet->distributor_id)->first();
-                            @endphp
-                            @if(!empty($thisDistributor))
-                                {{$thisDistributor->name}}
-                            @endif
-                        </td>
-                        @php
-                            $thisSaleItem = App\SaleItem::where('sales_id', $data->id)->get();
-                        @endphp
-                        <td style="vertical-align: top">
-                            @foreach($thisSaleItem as $item)
-                                @php
-                                    $thisService = App\Service::where('id', $item->service_id)->first();
-                                @endphp
-                                <div class="border-bottom">{{$thisService->name}}</div>
-                            @endforeach
-                            <div class="text-danger">Discount</div>
-                        </td>
-                        <td style="vertical-align: top">
-                            @foreach($thisSaleItem as $item)
-                                <div class="border-bottom">{{$item->service_qty}}</div>
-                            @endforeach
-                                <div></div>
-                        </td>
-                        <td style="vertical-align: top">
-                            @foreach($thisSaleItem as $item)
-                                @php
-                                    $thisService = App\Service::where('id', $item->service_id)->first();
-                                @endphp
-                                <div class="border-bottom">{{$thisService->rate}}</div>
-                            @endforeach
-                            <div></div>
-                        </td>
-                        <td style="vertical-align: top">
-                            @foreach($thisSaleItem as $item)
-                                @php
-                                    $thisService = App\Service::where('id', $item->service_id)->first();
-                                    $getServiceTk = $item->service_qty * $thisService->rate ;
-                                @endphp
-                                
-                                <div class="border-bottom">{{$getServiceTk}}</div>
-                            @endforeach
-                            <div class="text-danger">- {{$data->discount}}</div>
-                        </td> 
-                        <td>
-                           
-                             {{round($data->grand_total)}}
-                            
-                        </td>
-                        <td>{{$data->delivery_date}}</td>
-                        <td>
-                            <a href="" class="btn-sm btn-warning" data-toggle="modal" data-target=".view-sale{{$data->id}}" title="View"><i class="fa fa-eye"></i></a> 
-                            <a href="{{route('admin_sale_edit', $data->id)}}" class="btn-sm btn-success" title="Edit"><i class="fa fa-pen"></i></a> 
-                            <a href="{{route('admin_sale_delete', $data->id)}}" onclick="return confirm('Are you sure want to Delete?')" class="btn-sm btn-danger" title="Delete"><i class="fa fa-trash"></i></a> 
-                        </td>
-                    </tr>
-                <?php } ?>
-                </tbody>
-                    <tr>
-                        <th colspan="12" class="text-right">Total</th>
-                        <th colspan="1" class="text-center">{{$sumTotalRawAmountCount}}</th>
-                        <th colspan="2"></th>
-                    </tr>
-                <tfoot>
-                    
-                </tfoot>
-              </table>
-              @foreach($getSale as $key => $data)
-                @include('admin.sale.view-modal')
-              @endforeach
+              <div id="showdata">
+              </div>
+
+             
             </div>
             <!-- /.card-body -->
-            <div class="card-footer text-right">
-                {{$getSale->links()}}
-            </div>
         </div>
     </div>
 </div>
 
 @endsection
 @section('cusjs')
+
+<script>
+    $(document).ready(function(){
+        //Show All Data
+        function getRecord(){
+            $.ajax({
+                type: "GET",
+                url: "{{route('admin_sale_ajax_get_datatable')}}",
+                //url: "{{route('admin_distributor_sale', '63')}}",
+                success: function(data){
+                    $("#showdata").empty().append(data)
+                    //call Paginate Function which is created Below
+                    paginate("{{route('admin_sale_ajax_get_datatable')}}")
+                }
+            })
+        }
+        getRecord()
+        //
+        //Paginition
+            function paginate(arg){
+                $('#showdata').on('click', ".pagination a", function(e){
+                    e.preventDefault();
+                    let url = $(this).attr('href').split('page=')[1];
+                    $.ajax({
+                        type: "get",
+                        url: arg+"?page="+url,
+                        success: function(data){
+                            $('#showdata').empty().append(data);
+                        },
+                    })
+                })
+            }
+        paginate();
+
+        //
+        //Search
+        $('#searchform').on('keyup', function(){
+            var search = $('input#search').val()
+            //console.log(search);
+            var token = '{{ csrf_token() }}';
+            $.ajax({
+                type: "GET",
+                url: "{{route('admin_sale_search')}}",
+                data: {
+                    search : search,
+                    _token: token,
+                },
+                success: function(data){
+                    // console.log(data)
+                    if(search){
+                        $('#showdata').empty().append(data);
+                        paginate("{{route('admin_sale_search')}}");
+                        //console.log(data)
+                    } else {
+                        getRecord() 
+                    }
+                }
+            })
+        })
+
+        //Filter
+        //Filter Outlet
+        $("#filterOutlet").change(function(e){
+            e.preventDefault;
+            let foutletUrl = $(this).find(":selected").val();
+            $.ajax({
+                type: "GET",
+                url: "{{route('admin_sale_filterOutlet', '')}}/"+foutletUrl,
+                success: function(data){
+                    if(foutletUrl != 'showall'){
+                        $('#showdata').empty().append(data);
+                    } else{
+                        getRecord() 
+                    }
+                    //console.log(data)
+                }
+            })
+        })
+        //Filter Distributor
+        $("#filterDistributor").change(function(e){
+            e.preventDefault;
+            let fdistributorUrl = $(this).find(":selected").val();
+            $.ajax({
+                type: "GET",
+                url: "{{route('admin_sale_filterDistributor', '')}}/"+fdistributorUrl,
+                success: function(data){
+                    if(fdistributorUrl != 'showall'){
+                        $('#showdata').empty().append(data);
+                    } else{
+                        getRecord() 
+                    }
+                    //console.log(data)
+                }
+            })
+        })
+
+        //Filter DateRange 
+        $('#reservation').change('.applyBtn', function(e){
+            e.preventDefault;
+            let dateRangePick = $('input#reservation').val();
+            $.ajax({
+                type: "GET",
+                url: "{{route('admin_sale_filterDate', '')}}/"+dateRangePick,
+                success: function(data){
+                    $('#showdata').empty().append(data);
+                    //console.log(data)
+                }
+            })
+        })
+        $('.cancelBtn').click(function(e){
+            e.preventDefault;  
+            getRecord()   
+            console.log('s')
+        })
+
+    })
+</script>
+
+
 <style>
     .table td{
         padding: 2px;
@@ -150,31 +218,33 @@ Sevices
     .table td div.border-bottom {
         vertical-align: top;
     }
+    .table td div.border-bottom:last-child{
+        border-bottom: 0px !important;
+    }
 </style>
 
-    <link rel="stylesheet" href="{{asset('public/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
-    <link rel="stylesheet" href="{{asset('public/admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
-    <script src="{{asset('public/admin/plugins/datatables/jquery.dataTables.min.js')}}"></script>
-    <script src="{{asset('public/admin/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
-    <script src="{{asset('public/admin/plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
-    <script src="{{asset('public/admin/plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
+
+<script>
+    //Date range picker
+    $('#reservation').daterangepicker({
+        locale: {
+            format: 'YYYY-MM-DD',
+        },
+    })
+  
+    //Date range picker with time picker
+    
+    $('#reservationtime').daterangepicker({
+    timePicker: false,
+    timePickerIncrement: 0,
+    locale: {
+        format: 'MM-DD-YYYY hh:mm A'
+    }
+})
 
 
-    <script>
-    $(function () {
-        $('#customDataTable').DataTable({
-        "paging": false,
-        "lengthChange": false,
-        "searching": true,
-        "ordering": false,
-        "info": false,
-        "autoWidth": true,
-        "responsive": true,
-        //"lengthMenu": [[1, 2, 5, -1], [1, 2, 5, "All"]],
-        });
-    });
-    </script>
 
+</script>
 
 
 @endsection

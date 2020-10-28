@@ -29,6 +29,8 @@ class OutletController extends Controller
         $data->address = $request->address;
         $data->mobile = $request->mobile;
         $data->distributor_id = $request->distributor_id;
+        $data->visi_id = $request->visi_id;
+        $data->visi_size = $request->visi_size;
         $data->save();
         return redirect()->back()->with('success', 'Added Successfully');
     }
@@ -40,6 +42,8 @@ class OutletController extends Controller
         $data->address = $request->address;
         $data->mobile = $request->mobile;
         $data->distributor_id = $request->distributor_id;
+        $data->visi_id = $request->visi_id;
+        $data->visi_size = $request->visi_size;
         $data->save();
         return redirect()->back()->with('success', 'Edited Successfully');
     }

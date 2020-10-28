@@ -19,6 +19,8 @@ class CreateOutletsTable extends Migration
             $table->string('address')->nullable();
             $table->string('mobile')->nullable();
             $table->string('distributor_id')->nullable();
+            $table->string('visi_id')->nullable();
+            $table->string('visi_size')->nullable();
             $table->timestamps();
         });
     }

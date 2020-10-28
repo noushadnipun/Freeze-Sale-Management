@@ -25,11 +25,14 @@ Route::group(['prefix'=> 'admin/', 'namespace'=> 'Admin', 'as' => 'admin_','midd
 
     //Distributor
     Route::get('distributor', 'DistributorController@index')->name('distributor');
+    Route::get('distributor/data', 'DistributorController@getRecord')->name('distributor_data');
     Route::post('distributor/store', 'DistributorController@store')->name('distributor_store');
-    Route::get('distributor/edit/{id}', 'DistributorController@index')->name('distributor_edit');
+    Route::get('distributor/edit/{id}', 'DistributorController@getRecord')->name('distributor_edit');
     Route::post('distributor/update', 'DistributorController@update')->name('distributor_update');
     Route::get('distributor/delete/{id}', 'DistributorController@destroy')->name('distributor_delete');
+    Route::get('distributor/search', 'DistributorController@getRecord')->name('distributor_search');
     Route::get('distributor/outlet/{id}', 'DistributorController@getTotalOutlet')->name('distributor_outlet');
+    Route::get('distributor/sale/{id}', 'DistributorController@getTotalSale')->name('distributor_sale');
 
 
     //Outlet
@@ -40,30 +43,62 @@ Route::group(['prefix'=> 'admin/', 'namespace'=> 'Admin', 'as' => 'admin_','midd
     Route::get('outlate/delete/{id}', 'OutletController@destroy')->name('outlet_delete');
     Route::get('outlate/service/{id}', 'OutletController@getTotalSale')->name('outlet_service');
 
-    //Product
+    //Product as Service
     Route::get('service', 'ServiceController@index')->name('service');
     Route::post('service/store', 'ServiceController@store')->name('service_store');
     Route::get('service/edit/{id}', 'ServiceController@index')->name('service_edit');
     Route::post('service/update', 'ServiceController@update')->name('service_update');
     Route::get('service/delete/{id}', 'ServiceController@destroy')->name('service_delete');
 
-    //Service
+    //Service as Sale
     Route::get('sale', 'SaleController@index')->name('sale');
+    Route::get('sale/ajax/data', 'SaleController@getRecord')->name('sale_ajax_get_datatable');
     Route::get('sale/create', 'SaleController@create')->name('sale_new');
     Route::post('sale/store', 'SaleController@store')->name('sale_store');
     Route::get('sale/edit/{id}', 'SaleController@edit')->name('sale_edit');
     Route::post('sale/update', 'SaleController@update')->name('sale_update');
     Route::get('sale/delete/{id}', 'SaleController@destroy')->name('sale_delete');
     Route::get('sale/search/', 'SaleController@ajaxSearch')->name('sale_search');
+    Route::get('sale/export/excel', 'SaleController@exportExcel')->name('sale_export_excel');
+
+
+    Route::get('sale/outletrecord', function(){
+        $getOutlet = App\Outlet::orderBy('id', 'DESC')->get();
+        return view('admin.sale.outlet-record', compact('getOutlet'));
+    })->name('sale_outlet_record');
+
+    Route::get('sale/outlet/new', function(){
+        return view('admin.sale.modal-new-outlet-form');
+    })->name('sale_outlet_modal_form');
+
+    Route::get('sale/filter/outlet/{id}', 'SaleController@filterOutlet')->name('sale_filterOutlet');
+    Route::get('sale/filter/distributor/{id}', 'SaleController@filterDistributor')->name('sale_filterDistributor');
+
+    Route::get('sale/filter/date/{id}', 'SaleController@filterDate')->name('sale_filterDate');
+
+
+    //pdf
+    Route::get('/downloadPDF','SaleController@downloadPDF')->name('sale_pdf');
+
+
+    //User
+    Route::get('user', 'HomeController@userIndex')->name('user_index');
+    Route::post('user/store', 'HomeController@userStore')->name('user_store');
+    Route::get('user/edit/{id}', 'HomeController@userIndex')->name('user_edit');
+    Route::post('user/update', 'HomeController@userUpdate')->name('user_update');
+    Route::get('user/delete/{datefilter}', 'HomeController@userDestroy')->name('user_delete');
+
 });
 
 //Api
 Route::get('/api/outlet', 'ApiController@outlet')->name('api_outlet');
 Route::get('/api/service', 'ApiController@service')->name('api_service');
+Route::get('/api/service/{id}', 'ApiController@service')->name('api_service_id');
+Route::get('/api/distributor', 'ApiController@distributor')->name('api_distributor');
 
 
 Route::get('/test', function(){
-    //return view('test');
+    return view('test');
 });
 
 

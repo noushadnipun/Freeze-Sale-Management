@@ -34,6 +34,9 @@
 <script src="{{asset('public/admin/dist/js/demo.js')}}"></script>
 <!-- Select2 -->
 {{-- <script src="{{asset('public/admin/plugins/select2/js/select2.full.min.js')}}"></script> --}}
+
+
+
 <script>
   $(function () {
     //Initialize Select2 Elements
@@ -102,4 +105,7 @@
     });
 
   })
+
+ 
 </script>
+

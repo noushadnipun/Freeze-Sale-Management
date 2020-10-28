@@ -6,6 +6,7 @@
   <title>@yield('site-title') | Powered By: Nextzen Limited</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}" />
   @include('admin.layouts.css')
 </head>
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed  text-sm">

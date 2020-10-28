@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class Outlet extends Model
 {
     protected $table = "outlets";
-    protected $fillable = ['name', 'address', 'mobile'. 'distributor_id'];
+    protected $fillable = ['name', 'address', 'mobile'. 'distributor_id', 'visi_id' ,'visi_size',];
 }

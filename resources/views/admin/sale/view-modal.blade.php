@@ -14,19 +14,24 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="">Call Date</label>
-                            <input type="text" class="form-control" id="call_datepicker" name="call_date" value="{{$data->call_date }}" disabled>
+                            <input type="text" class="form-control" xid="call_datepicker" name="call_date" value="{{$data->call_date }}" disabled>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="">Visi ID</label>
-                            <input type="text" class="form-control" name="visi_id" value="{{ $data->visi_id }}" disabled>
+                            @if(!empty($data->id))
+                                @php
+                                $saleValueOutletID = App\Outlet::where('id', $data->outlet_id)->first();
+                                @endphp
+                            @endif
+                            <input type="text" class="form-control" name="visi_id" value="{{!empty($data->id) && $saleValueOutletID ? $saleValueOutletID->visi_id : '' }}" disabled>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="">Visi Size</label>
-                            <input type="text" class="form-control" name="visi_size" value="{{ $data->visi_size }}" disabled>
+                            <input type="text" class="form-control" name="visi_size" value="{{!empty($data->id) && $saleValueOutletID ? $saleValueOutletID->visi_size : '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -35,10 +40,13 @@
                         <label for="">Outlet</label>
                             @php
                                 $getOutlet = App\Outlet::where('id', $data->outlet_id)->first();
-                                $getDistributor = App\Distributor::where('id', $getOutlet->distributor_id)->first();
+                                if (!empty($getOutlet)){
+                                    $getDistributor = App\Distributor::where('id', $getOutlet->distributor_id)->first();
+                                }   
                             @endphp
-                        <input type="text" class="form-control" value="{{$getOutlet->name}}" disabled>
-                        <div class="p-3 bg-white text-dark text-md">
+                        @if(!empty($getOutlet))
+                            <input type="text" class="form-control" value="{{$getOutlet->name}}" disabled>
+                            <div class="p-3 bg-white text-dark text-md">
                                 <div class="font-weight-bold">Address: <span class="outlet-address">{{$getOutlet->address}}</span> </div>
                                 <div class="font-weight-bold">Mobile: <span class="outlet-mobile">{{$getOutlet->mobile}}</span> </div>
                                 <div class="font-weight-bold"> 
@@ -46,7 +54,8 @@
                                         {{ !empty($getDistributor) ? 'Distributor: '.$getDistributor->name : '' }}
                                     </span> 
                                 </div>
-                        </div>
+                            </div>
+                        @endif
                     </div>
 
                     {{-- <div class="col-md-4">
@@ -58,7 +67,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="">Delivery Date</label>
-                            <input type="text" class="form-control" id="delivery_datepicker" name="delivery_date" value="{{ $data->delivery_date  }}" disabled>
+                            <input type="text" class="form-control" xid="delivery_datepicker" name="delivery_date" value="{{ $data->delivery_date  }}" disabled>
                         </div>
                     </div>
 
@@ -141,13 +150,13 @@
                                         <input type="hidden" class="form-control" id="vatValue" name="vatValue" />
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr class="d-none">
                                     <th class="text-center p-3">Total Amount</th>
                                     <td class="text-center p-3">
                                         <input type="text" class="form-control" id="totalAmount" name="totalAmount" disabled="true" value="{{ $data->grand_total + $data->discount }}" />
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr class="d-none">
                                     <th class="text-center p-3">Discount</th>
                                     <td class="text-center p-3">
                                         <input type="text" class="form-control" id="discount" name="discount" onkeyup="discountFunc()" autocomplete="off" value="{{ $data->discount }}" disabled/>
@@ -159,13 +168,13 @@
                                         <input type="text" class="form-control" id="grandTotal" name="grandTotal" disabled="true" value="{{$data->grand_total }}" />
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr class="d-none">
                                     <th class="text-center p-3">Paid Amount</th>
                                     <td class="text-center p-3">
                                         <input type="text" class="form-control" id="paid" name="paid_amount" autocomplete="off" onkeyup="paidAmount()" autocomplete="off" value="{{$data->paid_amount }}" disabled/>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr class="d-none">
                                     <th class="text-center p-3">Due Amount</th>
                                     <td class="text-center p-3">
                                     <input type="text" class="form-control" id="due" name="due" disabled="true" value="{{$data->grand_total - $data->paid_amount }}"/>
