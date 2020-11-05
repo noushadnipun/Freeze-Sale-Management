@@ -1,29 +1,36 @@
-<table>
+<table style="display: table;">
     <thead>
         <tr>
-            
+            <th style="font-weight: bold;  text-align: center;">SL No</th>
+            <th style="font-weight: bold;  text-align: center;">Call No</th>
+            <th style="font-weight: bold;  text-align: center;">Call Date</th>
+            <th style="font-weight: bold;  text-align: center;">Visi ID</th>
+            <th style="font-weight: bold;  text-align: center;">Visi Size</th>
+            <th style="font-weight: bold;  text-align: center;">Outlet Name</th>
+            <th style="font-weight: bold;  text-align: center;">Address &amp; Cell No</th>
+            <th style="font-weight: bold;  text-align: center;">DB Name</th>
+            <th style="font-weight: bold;  text-align: center;">Work Details</th>
+            <th style="font-weight: bold;  text-align: center;">Qty</th>
+            <th style="font-weight: bold;  text-align: center;">Rate</th>
+            <th style="font-weight: bold;  text-align: center;">Taka</th>
+            <th style="font-weight: bold;  text-align: center;">Total Amount</th>
+            <th style="font-weight: bold;  text-align: center;">Delivery Date</th>
         </tr>
     </thead>
     <tbody>
     <?php foreach($getSale as $key => $data)  {?>
         <tr>
-            <td>{{ $key + $getSale->firstItem()}}</td>
-            <td>{{$data->call_no}}</td>
-            <td>{{$data->call_date}}</td>
-            <td>
-                    {{$data->visi_id}}
-            </td>
-            <td>
-                    {{$data->visi_size}}
-            </td>
-            <td>
-                {{$data->outletName}}
-            </td>
-            <td>
+            <td style="vertical-align: center; text-align: center;">{{++$key}}</td>
+            <td style="vertical-align: center; text-align: center;">{{$data->call_no}}</td>
+            <td style="vertical-align: center; text-align: center;">{{$data->call_date}}</td>
+            <td style="vertical-align: center; text-align: center;"> {{$data->visi_id}}</td>
+            <td style="vertical-align: center; text-align: center;">{{$data->visi_size}} </td>
+            <td style="vertical-align: center; text-align: center;">{{$data->outletName}}</td>
+            <td style="vertical-align: center; text-align: center;">
                     {{$data->outletAddress}} <br>
                     {{$data->outletMobile}}
             </td>
-            <td>
+            <td style="vertical-align: center; text-align: center;">
                     {{$data->dbName}}
             </td>
             @php
@@ -34,44 +41,52 @@
                     @php
                         $thisService = App\Service::where('id', $item->service_id)->first();
                     @endphp
-                    <div class="border-bottom">{{$thisService->name}}</div>
+                    {{$thisService->name}} <br style="mso-data-placement:same-cell;" />
                 @endforeach
                
-                {{-- <div class="text-danger">Discount</div> --}}
             </td>
-            <td style="vertical-align: top">
+            <td style="vertical-align: top;  text-align: center;">
                 @foreach($data->saleItems as $item)
-                    <div class="border-bottom">{{$item->service_qty}}</div>
+                    {{$item->service_qty}} <br style="mso-data-placement:same-cell;" />
                 @endforeach
-                    {{-- <div></div> --}}
             </td>
-            <td style="vertical-align: top">
+            <td style="vertical-align: top;  text-align: center;">
                 @foreach($data->saleItems as $item)
                     @php
                         $thisService = App\Service::where('id', $item->service_id)->first();
                     @endphp
-                    <div class="border-bottom">{{$thisService->rate}}</div>
+                    {{$thisService->rate}} <br style="mso-data-placement:same-cell;" />
                 @endforeach
-                {{-- <div></div> --}}
             </td>
-            <td style="vertical-align: top">
+            <td style="vertical-align: top;  text-align: center;">
                 @foreach($data->saleItems as $item)
                     @php
                         $thisService = App\Service::where('id', $item->service_id)->first();
                         $getServiceTk = $item->service_qty * $thisService->rate ;
                     @endphp
-                    
-                    <div class="border-bottom">{{$getServiceTk}}</div>
+                    {{$getServiceTk}} <br style="mso-data-placement:same-cell;" />
                 @endforeach
                 {{-- <div class="text-danger">- {{$data->discount}}</div> --}}
             </td> 
-            <td>
+            <td style="vertical-align: center; text-align: center;">
                 
                     {{round($data->grand_total)}}
                 
             </td> 
-            <td>{{$data->delivery_date}}</td>
+            <td style="vertical-align: center; text-align: center;">{{$data->delivery_date}}</td>
         </tr>
     <?php } ?>
     </tbody>
+    <tfoot>
+        <tr>
+            <th colspan="12" style="font-weight: bold;  text-align: right;">Total</th>
+            <th style="font-weight: bold;  text-align: center;">{{$sumTotalRawAmountCount}}</th>
+            <th colspan="1"></th>
+        </tr>
+    </tfoot>
 </table>
+<style>
+    .text-center-align-center {
+        text-align: center;
+    }
+</style>

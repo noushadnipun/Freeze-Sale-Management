@@ -16,7 +16,7 @@ Sevices
                         <label for="">Search</label>
                         <form action="" method="get" id='searchform'>
                             @csrf
-                            <input type="text" name="search" id="search" class="form-control form-control-sm">
+                            <input type="text" name="search" id="search" class="form-control form-control-sm" placeholder="Visi ID / Visi Size">
                         </form>
                     </div>
 
@@ -61,7 +61,12 @@ Sevices
                     </div>
                     <div>
                         <label for="">Export As PDF</label>
-                        <a href="{{route('admin_sale_pdf')}}" target="_blank" class="btn btn-sm btn-success d-block">Export as pdf</a>
+                        <a href="{{route('admin_sale_pdf')}}" target="_blank" class="btn btn-sm btn-danger d-block">Export as pdf</a>
+                    </div>
+
+                    <div>
+                        <label for="">Export As Excel</label>
+                        <a href="{{route('admin_sale_export_excel')}}" target="_blank" class="btn btn-sm btn-success d-block">Export as Excel</a>
                     </div>
 
 

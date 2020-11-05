@@ -1,4 +1,5 @@
-<option>Select Visi ID</option>
+<input type="text" >
+{{-- <option>Select Visi ID</option> --}}
 @foreach($getOutlet as $data)
     
     <option 

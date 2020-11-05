@@ -10,7 +10,7 @@
 
     <div class="card card-purple card-outline">
         <div class="card-header">
-            Sale
+            {{!empty($saleValue->id) ? 'Edit Service' : 'Add Service'}}
         </div>
         <form method="post" action="{{!empty($saleValue->id) ? route('admin_sale_update') : route('admin_sale_store') }}"  id="createOrderForm">
             @csrf
@@ -38,12 +38,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" id="outletvalueEmpty">
                     <div class="col-md-3">
                         <label for="">Choose Visi ID</label> 
+                        <span class="editoutlet"></span>
                         <a href="" class="addnewoutlet badge badge-warning float-right" data-toggle="modal" data-target="#exampleModal">Add New</a>
 
-                        <select id="showOutletRecord" name="outlet_id" sdata-live-search="true" class="sselectpicker form-control showOutletInfo" data-size="10" required>
+                        <select id="showOutletRecord" name="outlet_id" xdata-live-search="true" class="form-control showOutletInfo showAlert" xdata-size="10" required>
                             @if(!empty($saleValue->id))
                                 @php
                                     $saleValueVisiID = App\Outlet::where('id', $saleValue->outlet_id)->first();
@@ -55,9 +56,8 @@
                                 
                             @endif
                         </select>
-                        
-                        <div id="modalOutletform"></div>
-                        <div class="p-3 bg-white text-dark text-md">
+
+                        <div class="p-3 bg-white text-dark text-md" id="outletDataEmpty">
 
                                 @if(!empty($saleValue))
                                     @php
@@ -83,6 +83,7 @@
                                         
                                     </span> 
                                 </div>
+                                <div class="outlet-previous-service"></div>
                         </div>
                     </div>
 
@@ -161,7 +162,7 @@
                                         <tr id="row<?php echo $x; ?>" class="<?php echo $arrayNumber; ?>">			  				
                                             <td style="margin-left:20px;">
                                                 <div class="form-group">
-                                                    <select class="form-control selectpicker" name="service_id[]" id="productName<?php echo $x; ?>" onchange="getProductData(<?php echo $x; ?>)" data-live-search="true" data-size="8" required>
+                                                    <select class="form-control" name="service_id[]" id="productName<?php echo $x; ?>" onchange="getProductData(<?php echo $x; ?>)" xdata-live-search="true" data-size="8" required>
                                                         <option value="">~~SELECT~~</option>
                                                         <?php
                                                             $productData = App\Service::orderBy('id', 'DESC')->get();
@@ -209,7 +210,7 @@
                             <tr id="row<?php echo $x; ?>" class="<?php echo $arrayNumber; ?>">			  				
                                 <td style="margin-left:20px;">
                                     <div class="form-group">
-                                        <select class="form-control selectpicker" name="service_id[]" id="productName<?php echo $x; ?>" onchange="getProductData(<?php echo $x; ?>)" data-live-search="true" data-size="8" required>
+                                        <select class="form-control xselectpicker" name="service_id[]" id="productName<?php echo $x; ?>" onchange="getProductData(<?php echo $x; ?>)" xdata-live-search="true" data-size="8" required>
                                             <option value="">~~SELECT~~</option>
                                             <?php
                                                 $productData = App\Service::orderBy('id', 'DESC')->get();
@@ -320,9 +321,9 @@
             </div>
         </form>
     </div>
+    <div id="modalOutletform"></div>
 
-
-
+    <div id="modalOutletPreviousReport"></div>
 @endsection
 
 
@@ -363,6 +364,7 @@
                 }
             })
         })
+
         //Action Outlet modal Form
         function fadeOut(){
             $("#msg").delay(1200).fadeIn(400);
@@ -380,10 +382,57 @@
                     showOutletRecord()
                     $("#msg").empty().append('<div class="alert alert-success" role="alert">New outlet Added Successfully</div>');
                     //$('#exampleModal').modal('hide');
+                    $('#outletvalueEmpty input').val('');
+                    $('#outletDataEmpty span').text('');
                     fadeOut();
                 }
             })
         })
+
+        //EditOutlet
+        $('.showOutletInfo').on('change', function() {
+            var getoutletID = $('.showOutletInfo').find(':selected').val();
+
+            var sb = '<a href="" class="editoutletbtn'+getoutletID+' badge badge-success" data-toggle="modal" data-target="#exampleModal'+getoutletID+'">Edit</a>'
+            $('.editoutlet').empty().append(sb);
+            $('.editoutletbtn'+getoutletID).click(function(e){
+                e.preventDefault();
+                //alert(getoutletID);
+                $(this).data('toggle');
+                $.ajax({
+                    type: "GET",
+                    url: "{{route('admin_sale_outlet_modal_form_edit', '')}}/"+getoutletID,
+                    success: function(data){
+                        $('#modalOutletform').append(data);
+                        //
+                    }
+                })
+                
+            })
+        })
+
+        //Action Outlet Edit Form
+        $('#modalOutletform').on('submit', '#modalOutletEdit', function(event){
+            event.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url:  "{{route('admin_outlet_update')}}",
+                data: $('#modalOutletEdit').serialize(),
+                success: function(datas){
+                    //$("#modalOutletNew input").val("")
+                    $('#showOutletRecord').empty()
+                    showOutletRecord()
+                    $("#msg").empty().append('<div class="alert alert-success" role="alert">Edited Successfully</div>');
+                    //$('#exampleModal').modal('hide');
+                    $('#outletvalueEmpty input').val('');
+                    $('#outletDataEmpty span').text('');
+                    fadeOut();
+                }
+            })
+            
+        })
+            //
+        
         //
         
     })
@@ -427,7 +476,40 @@
         });
     }
     outletAllData()
-    
+
+    //Show Alert selected Visi ID if have Previous Work
+    $('.showAlert').on('change', function(e){
+        e.preventDefault();
+        var getShowAlertID = $(this).find(':selected').val();
+        $.ajax({
+            type: "GET",
+            url : "{{route('admin_count_sale_showalert_previous_visi', '')}}/"+getShowAlertID,
+            success: function(datacount){
+                if(datacount > 0){
+                    let outletPreviousAlert = '<div class="text-danger">Last 3 month work report Available <a class="outletPreviousLinkButton badge badge-sm badge-primary" data-toggle="modal" data-target="#modalOutletPreviousReportModal'+getShowAlertID+'" href="">Check '+datacount+'</a> </div>';
+                    $('.outlet-previous-service').empty();
+                    $('.outlet-previous-service').append(outletPreviousAlert);
+                    $('.outlet-previous-service').click('a.outletPreviousLinkButton', function(e){
+                        e.preventDefault();
+                        //console.log(getShowAlertID)
+                        $(this).data('toggle');
+                        $.ajax({
+                            type: "GET",
+                            url: "{{route('admin_sale_showalert_previous_visi', '')}}/"+getShowAlertID,
+                            success: function(dataShow){
+                                $('#modalOutletPreviousReport').append(dataShow)
+                                 //getShowAlertID = $(this).val("");
+                            }
+                        })  
+                    })
+                } else {
+                    $('.outlet-previous-service').empty();
+                }
+            }
+        })
+    })
+     
+
 </script>
 
 
@@ -715,26 +797,34 @@
 </script>
 
 
+
 <!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.min.css">
 
-
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css"/>
+<!-- Latest compiled and minified JavaScript -->  
 <link href="http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.full.min.js"></script>
 
 <script>
   $(function () {
     //Date picker
     $('#call_datepicker').datepicker({
       autoclose: true,
-      dateFormat: 'dd/mm/yy',
+      dateFormat: 'yy-mm-dd',
     })
     $('#delivery_datepicker').datepicker({
       autoclose: true,
-      dateFormat: 'dd/mm/yy'
+      dateFormat: 'yy-mm-dd'
     })
   })
+//
+
+  $(function () {
+  $("select").select2({
+        placeholder: "Select an Option",
+        allowClear: true,
+  });
+});
 </script>
 
 

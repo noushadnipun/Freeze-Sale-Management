@@ -72,7 +72,7 @@ class SaleController extends Controller
                //dd($data2);
             }
         }
-        return redirect()->route('admin_sale')->with('success', 'Added Successfully.'); 
+        return redirect()->back()->with('success', 'Added Successfully.'); 
     }
 
     //
@@ -82,16 +82,38 @@ class SaleController extends Controller
         $data = $request->all();
         $lastid = Sale::find($request->id)->update($data);
         //$saleItemRowCount = SaleItem::where('sales_id', $request->id)->count();
-
-        for ($i=0; $i<count($request->item_id); $i++) {
-            $data2 = [
-                'sales_id' => $request->id,
-                'service_id' => $request->service_id[$i],
-                'service_qty' => $request->service_qty[$i],      
-            ];
+        //SaleItem::where('sales_id', $request->id)->delete(); 
+        //Delete 
+        // for ($x=0; $x<count($request->item_id); $x++) {
+        //     SaleItem::where('id', $request->item_id[$x])->delete(); 
+        // }
+        // if(empty($request->item_id)){
+        //     $request->item_id = $request->service_id;
+        // }
+        //dd(count($request->item_id));
+        
+            
+        SaleItem::where('sales_id', $request->id)->delete();
+            
+        for ($i=0; $i<count($request->service_id); $i++) {
+            // foreach($request->service_id as $item=>$v){
+                $data2 = [
+                    'sales_id' => $request->id,
+                    'service_id' => $request->service_id[$i],
+                    'service_qty' => $request->service_qty[$i],  
+                    // 'sales_id' => $request->id,
+                    // 'service_id' => $request->service_id[$item],
+                    // 'service_qty' => $request->service_qty[$item],    
+                ];
+                SaleItem::insert($data2); 
+            // }
+        }
+            
+            
             //SaleItem::where('id', $request->item_id[$i])->update($data2);       
-            SaleItem::where('id', $request->item_id[$i])->update($data2);       
-        }  
+            //SaleItem::where('id', $request->item_id[$i])->update($data2);
+            //SaleItem::destroy($data2);     
+          
         return redirect()->back()->with('success', 'Edited Successfully.'); 
     }
 
@@ -118,6 +140,7 @@ class SaleController extends Controller
                         ->orWhere('outlets.visi_id', 'Like', '%'.$request->search.'%')
                         ->orWhere('outlets.visi_size', 'Like', '%'.$request->search.'%')
                         ->orWhere('distributors.name', 'Like', '%'.$request->search.'%')
+                        ->orWhere('call_no', 'Like', '%'.$request->search.'%')
                         ->orderBy('id', 'DESC')->paginate('20');
         $sumTotalRawAmountCount = $getSale->sum('grand_total');
         //return $getSale;
@@ -155,14 +178,40 @@ class SaleController extends Controller
                         ->select('outlets.name as outletName', 'outlets.mobile as outletMobile', 'outlets.address as outletAddress','outlets.visi_id', 'outlets.visi_size',
                                 'sales.*', 
                                 'distributors.name as dbName', 'distributors.id as dbID' 
-                        )->whereBetween('sales.created_at', array($explode[0], $explode[1]))
+                        )//->whereBetween('sales.created_at', array($explode[0], $explode[1]))
+                        ->whereBetween('sales.call_date', array($explode[0], $explode[1]))
                         ->orderBy('id', 'DESC')->paginate('20');
             $sumTotalRawAmountCount = $getSale->sum('grand_total');
             return view('admin.sale.index-datatable', compact('getSale', 'sumTotalRawAmountCount'));
         }
 
 
-
+        //Show Alert Previous Work Visi ID
+        public function alertPreviousVisi($id)
+        {
+            $getId = $id;
+            $todayDate = date("Y-m-d");
+            $lastThreeMonth = date("Y-m-d", strtotime('-90 days'));
+            $getSale = Sale::with('saleItems')
+                        ->leftJoin('outlets', 'outlets.id', '=', 'sales.outlet_id')
+                        ->leftJoin('distributors', 'distributors.id', '=', 'outlets.distributor_id')
+                        ->select('outlets.name as outletName', 'outlets.mobile as outletMobile', 'outlets.address as outletAddress','outlets.visi_id', 'outlets.visi_size',
+                                'sales.*', 
+                                'distributors.name as dbName', 'distributors.id as dbID' 
+                        )->where('outlet_id', $id)
+                        ->whereBetween('call_date', array($lastThreeMonth, $todayDate))
+                        ->orderBy('id', 'DESC')->paginate('20');
+            $sumTotalRawAmountCount = $getSale->sum('grand_total');
+            $totalService = count($getSale);
+            return view('admin.sale.modal-outlet-previous-service-last-three-month', compact('getSale', 'sumTotalRawAmountCount', 'totalService', 'todayDate', 'lastThreeMonth', 'getId'));
+            //return $totalService;
+        }
+        public function countAlertPreviousVisi($id)
+        {
+            $totalService = self::alertPreviousVisi($id)->getSale;
+            return count($totalService);
+            //return 'hi';
+        }
 
 
     //Excel

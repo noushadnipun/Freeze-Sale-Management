@@ -71,11 +71,20 @@ Route::group(['prefix'=> 'admin/', 'namespace'=> 'Admin', 'as' => 'admin_','midd
         return view('admin.sale.modal-new-outlet-form');
     })->name('sale_outlet_modal_form');
 
+    Route::get('sale/outlet/edit/{id}', function($id){
+        $editOutletID = $id;
+        $editOutlet = App\Outlet::find($id);
+        return view('admin.sale.modal-new-outlet-form', compact('editOutlet', 'editOutletID'));
+    })->name('sale_outlet_modal_form_edit');
+
     Route::get('sale/filter/outlet/{id}', 'SaleController@filterOutlet')->name('sale_filterOutlet');
     Route::get('sale/filter/distributor/{id}', 'SaleController@filterDistributor')->name('sale_filterDistributor');
 
     Route::get('sale/filter/date/{id}', 'SaleController@filterDate')->name('sale_filterDate');
 
+    //Alert Previous Service When Selecting Visi id on new Service
+    Route::get('sale/showalert-prvious/{id}', 'SaleController@alertPreviousVisi')->name('sale_showalert_previous_visi');
+    Route::get('sale/showalert-prvious-count/{id}', 'SaleController@countAlertPreviousVisi')->name('count_sale_showalert_previous_visi');
 
     //pdf
     Route::get('/downloadPDF','SaleController@downloadPDF')->name('sale_pdf');
