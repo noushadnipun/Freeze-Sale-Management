@@ -486,7 +486,7 @@
             url : "{{route('admin_count_sale_showalert_previous_visi', '')}}/"+getShowAlertID,
             success: function(datacount){
                 if(datacount > 0){
-                    let outletPreviousAlert = '<div class="text-danger">Last 3 month work report Available <a class="outletPreviousLinkButton badge badge-sm badge-primary" data-toggle="modal" data-target="#modalOutletPreviousReportModal'+getShowAlertID+'" href="">Check '+datacount+'</a> </div>';
+                    let outletPreviousAlert = '<div class="text-danger">Previous Service Report Available <a class="outletPreviousLinkButton badge badge-sm badge-primary" data-toggle="modal" data-target="#modalOutletPreviousReportModal'+getShowAlertID+'" href="">Check '+datacount+'</a> </div>';
                     $('.outlet-previous-service').empty();
                     $('.outlet-previous-service').append(outletPreviousAlert);
                     $('.outlet-previous-service').click('a.outletPreviousLinkButton', function(e){

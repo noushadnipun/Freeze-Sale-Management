@@ -199,7 +199,7 @@ class SaleController extends Controller
                                 'sales.*', 
                                 'distributors.name as dbName', 'distributors.id as dbID' 
                         )->where('outlet_id', $id)
-                        ->whereBetween('call_date', array($lastThreeMonth, $todayDate))
+                        //->whereBetween('call_date', array($lastThreeMonth, $todayDate))
                         ->orderBy('id', 'DESC')->paginate('20');
             $sumTotalRawAmountCount = $getSale->sum('grand_total');
             $totalService = count($getSale);
