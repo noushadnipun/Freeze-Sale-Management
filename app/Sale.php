@@ -8,7 +8,7 @@ class Sale extends Model
 {
     protected $table = 'sales';
     protected $fillable = [
-        'outlet_id', 'call_no', 'call_date',  'delivery_date', 'grand_total'
+        'outlet_id', 'call_no', 'call_date', 'pull_date',  'delivery_date', 'grand_total'
     ];
 
 

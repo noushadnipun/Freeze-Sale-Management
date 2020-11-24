@@ -29,5 +29,6 @@
      
 </table>
 <div class="float-right mt-2 p-0">
-    {{ $getDistributor->links() }}
+    {{-- {{ $getDistributor->links() }} --}}
+     {{$getDistributor->appends(request()->query())->links()}}
 </div>

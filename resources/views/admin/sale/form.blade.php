@@ -33,6 +33,12 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
+                            <label for="">Pull Date</label>
+                            <input type="text" class="form-control" id="pull_datepicker" name="pull_date" value="{{!empty($saleValue->id) ? $saleValue->pull_date : '' }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
                             <label for="">Delivery Date</label>
                             <input type="text" class="form-control" id="delivery_datepicker" name="delivery_date" value="{{!empty($saleValue->id) ? $saleValue->delivery_date : '' }}">
                         </div>
@@ -137,7 +143,7 @@
                             <th style="width:15%;">Quantity</th>			  			
                             <th style="width:15%;">Total</th>			  			
                             <th style="width:10%;">
-                                <button type="button" class="btn btn-default" onclick="addRow()" id="addRowBtn" data-loading-text="Loading..."> <i class="fa fa-plus text-success"></i> </button>
+                                <button type="button" class="btn btn-default addRowBtn" onclick="addRow()" id="addRowBtn" data-loading-text="Loading..."> <i class="fa fa-plus text-success"></i> </button>
 
                                 <button type="reset" class="btn btn-default" onclick="resetOrderForm()"><i class="fa fa-undo text-warning"></i></button>
                             </th>
@@ -514,12 +520,23 @@
 
 
 <script>
-    
+    //Select 2
+    function selectRefresh() {
+        $('select').select2({
+            //-^^^^^^^^--- update here
+            tags: true,
+            placeholder: "Select an Option",
+            allowClear: true,
+            width: '100%'
+        });
+        //alert('hi');
+    } 
+    selectRefresh();
+
     //Add Row All Function
 
     function addRow() {
         $("#addRowBtn").button("loading");
-
         var tableLength = $("#productTable tbody tr").length;
 
         var tableRow;
@@ -531,7 +548,7 @@
             arrayNumber = $("#productTable tbody tr:last").attr('class');
             count = tableRow.substring(3);	
             count = Number(count) + 1;
-            arrayNumber = Number(arrayNumber) + 1;					
+            arrayNumber = Number(arrayNumber) + 1;			
         } else {
             // no table row
             count = 1;
@@ -543,7 +560,7 @@
             type: 'get',
             dataType: 'json',
             success:function(response) {
-                $("#addRowBtn").button("reset");			
+                $("#addRowBtn").button("reset");		
                 var tr = '<tr id="row'+count+'" class="'+arrayNumber+'">'+			  				
                     '<td>'+
                         '<div class="form-group">'+
@@ -576,15 +593,17 @@
                         '<button class="btn btn-default removeProductRowBtn" type="button" onclick="removeProductRow('+count+')"><i class="fa fa-trash text-danger"></i></button>'+
                     '</td>'+
                 '</tr>';
+                
                 if(tableLength > 0) {							
                     $("#productTable tbody tr:last").after(tr);
+                    selectRefresh();
                 } else {				
                     $("#productTable tbody").append(tr);
+                    selectRefresh();
                 }		
 
             } // /success
         });	// get the product data
-
     } // /add row
 
     function removeProductRow(row = null) {
@@ -809,6 +828,10 @@
   $(function () {
     //Date picker
     $('#call_datepicker').datepicker({
+      autoclose: true,
+      dateFormat: 'yy-mm-dd',
+    })
+    $('#pull_datepicker').datepicker({
       autoclose: true,
       dateFormat: 'yy-mm-dd',
     })

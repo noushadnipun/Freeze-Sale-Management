@@ -6,7 +6,6 @@ Sevices
 
 @section('page-content')
 @include('admin.includes.message')
-
 <div class="row">
     <div class="col-md-12">
         <div class="card card-primary card-outline">
@@ -66,7 +65,15 @@ Sevices
 
                     <div>
                         <label for="">Export As Excel</label>
-                        <a href="{{route('admin_sale_export_excel')}}" target="_blank" class="btn btn-sm btn-success d-block">Export as Excel</a>
+                        <form action="{{route('admin_sale_export_excel')}}" method="get">
+                            @csrf
+                            <input type="hidden" name="exceldateFilter" class="exceldateFilter">
+                            <input type="hidden" name="excelSearchBoxInput" class="excelSearchBoxInput">
+                            <input type="hidden" name="excelOutletFilter" class="excelOutletFilter">
+                            <input type="hidden" name="excelDistributorFilter" class="excelDistributorFilter">
+                            <button type="submit" class="btn btn-sm btn-success d-block">Export as Excel</button>
+                        </form>
+                        {{-- <a href="{{route('admin_sale_export_excel')}}" target="_blank" class="btn btn-sm btn-success d-block">Export as Excel</a> --}}
                     </div>
 
 
@@ -90,7 +97,6 @@ Sevices
         </div>
     </div>
 </div>
-
 @endsection
 @section('cusjs')
 
@@ -105,27 +111,34 @@ Sevices
                 success: function(data){
                     $("#showdata").empty().append(data)
                     //call Paginate Function which is created Below
-                    paginate("{{route('admin_sale_ajax_get_datatable')}}")
+                    paginate();
                 }
             })
         }
         getRecord()
         //
+
+
         //Paginition
-            function paginate(arg){
-                $('#showdata').on('click', ".pagination a", function(e){
+       
+        function paginate(){
+            $(document).ajaxComplete(function() {
+                $('.pagination a').click(function(e) {
                     e.preventDefault();
-                    let url = $(this).attr('href').split('page=')[1];
+                    var url = $(this).attr('href');
                     $.ajax({
-                        type: "get",
-                        url: arg+"?page="+url,
-                        success: function(data){
-                            $('#showdata').empty().append(data);
-                        },
-                    })
-                })
-            }
-        paginate();
+                        url: url,
+                        success: function(data) {
+                            $('#showdata').html(data);
+                        }
+                    });
+                });
+            });
+        }
+        
+        
+        //paginate();
+
 
         //
         //Search
@@ -144,8 +157,13 @@ Sevices
                     // console.log(data)
                     if(search){
                         $('#showdata').empty().append(data);
-                        paginate("{{route('admin_sale_search')}}");
-                        //console.log(data)
+                        paginate();
+                        let thisSearchValue = $("input[name = 'search']").val()
+                        $('input.excelSearchBoxInput').val(thisSearchValue);
+                        $('input.exceldateFilter').val('');
+                        $('input.excelOutletFilter').val('');
+                        $('input.excelDistributorFilter').val('');
+                        
                     } else {
                         getRecord() 
                     }
@@ -164,6 +182,10 @@ Sevices
                 success: function(data){
                     if(foutletUrl != 'showall'){
                         $('#showdata').empty().append(data);
+                        $('input.excelOutletFilter').val(foutletUrl);
+                        $('input.excelSearchBoxInput').val('');
+                        $('input.exceldateFilter').val('');
+                        $('input.excelDistributorFilter').val('');
                     } else{
                         getRecord() 
                     }
@@ -181,6 +203,10 @@ Sevices
                 success: function(data){
                     if(fdistributorUrl != 'showall'){
                         $('#showdata').empty().append(data);
+                        $('input.excelDistributorFilter').val(fdistributorUrl);
+                        $('input.excelSearchBoxInput').val('');
+                        $('input.exceldateFilter').val('');
+                        $('input.excelOutletFilter').val('');
                     } else{
                         getRecord() 
                     }
@@ -198,14 +224,19 @@ Sevices
                 url: "{{route('admin_sale_filterDate', '')}}/"+dateRangePick,
                 success: function(data){
                     $('#showdata').empty().append(data);
-                    //console.log(data)
+                    paginate();
+
+                    $('input.exceldateFilter').val(dateRangePick);
+                    $('input.excelSearchBoxInput').val('');
+                    $('input.excelOutletFilter').val('');
+                    $('input.excelDistributorFilter').val('');
                 }
             })
         })
         $('.cancelBtn').click(function(e){
             e.preventDefault;  
             getRecord()   
-            console.log('s')
+            //console.log('s')
         })
 
     })
@@ -250,6 +281,8 @@ Sevices
 
 
 </script>
+
+
 
 
 @endsection

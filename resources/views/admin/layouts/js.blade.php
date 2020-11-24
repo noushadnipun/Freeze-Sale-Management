@@ -29,15 +29,16 @@
 <!-- AdminLTE App -->
 <script src="{{asset('public/admin/dist/js/adminlte.js')}}"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="{{asset('public/admin/dist/js/pages/dashboard.js')}}"></script>
+{{-- <script src="{{asset('public/admin/dist/js/pages/dashboard.js')}}"></script> --}}
 <!-- AdminLTE for demo purposes -->
-<script src="{{asset('public/admin/dist/js/demo.js')}}"></script>
+{{-- <script src="{{asset('public/admin/dist/js/demo.js')}}"></script> --}}
 <!-- Select2 -->
 {{-- <script src="{{asset('public/admin/plugins/select2/js/select2.full.min.js')}}"></script> --}}
 
 
 
 <script>
+  /*
   $(function () {
     //Initialize Select2 Elements
     $('.select2').select2()
@@ -105,7 +106,7 @@
     });
 
   })
-
+*/
  
 </script>
 

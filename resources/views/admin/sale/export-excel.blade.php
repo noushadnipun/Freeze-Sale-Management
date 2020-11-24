@@ -1,9 +1,10 @@
-<table style="display: table;">
+<table style="display: table;"  border="1">
     <thead>
         <tr>
             <th style="font-weight: bold;  text-align: center;">SL No</th>
             <th style="font-weight: bold;  text-align: center;">Call No</th>
             <th style="font-weight: bold;  text-align: center;">Call Date</th>
+            <th style="font-weight: bold;  text-align: center;">Pull Date</th>
             <th style="font-weight: bold;  text-align: center;">Visi ID</th>
             <th style="font-weight: bold;  text-align: center;">Visi Size</th>
             <th style="font-weight: bold;  text-align: center;">Outlet Name</th>
@@ -23,6 +24,7 @@
             <td style="vertical-align: center; text-align: center;">{{++$key}}</td>
             <td style="vertical-align: center; text-align: center;">{{$data->call_no}}</td>
             <td style="vertical-align: center; text-align: center;">{{$data->call_date}}</td>
+            <td style="vertical-align: center; text-align: center;">{{$data->pull_date}}</td>
             <td style="vertical-align: center; text-align: center;"> {{$data->visi_id}}</td>
             <td style="vertical-align: center; text-align: center;">{{$data->visi_size}} </td>
             <td style="vertical-align: center; text-align: center;">{{$data->outletName}}</td>
@@ -79,7 +81,13 @@
     </tbody>
     <tfoot>
         <tr>
-            <th colspan="12" style="font-weight: bold;  text-align: right;">Total</th>
+            <th colspan="11" class="text-left" style="font-weight: bold;  font-size: 12px;">
+                @php
+                 $inWordAmount  = App\CustomClass\NumberToWord::numberTowords($sumTotalRawAmountCount); 
+                @endphp
+                 In Word: {{ $inWordAmount }}
+            </th>
+            <th colspan="1" style="font-weight: bold;  text-align: right;">Total</th>
             <th style="font-weight: bold;  text-align: center;">{{$sumTotalRawAmountCount}}</th>
             <th colspan="1"></th>
         </tr>
@@ -88,5 +96,9 @@
 <style>
     .text-center-align-center {
         text-align: center;
+    }
+
+    tr td {
+        border: 1px solid #000000;
     }
 </style>

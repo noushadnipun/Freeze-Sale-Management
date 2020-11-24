@@ -22,7 +22,7 @@ class SaleController extends Controller
     {
          return view('admin.sale.index');
     }
-
+    
      //
     public function getRecord()
     {
@@ -34,7 +34,6 @@ class SaleController extends Controller
                                 'sales.*', 
                                 'distributors.name as dbName', 'distributors.id as dbID' 
                         )->orderBy('id', 'DESC')->paginate('20');
-        //dd($getSale);
         $sumTotalRawAmountCount = $getSale->sum('grand_total');
         return view('admin.sale.index-datatable', compact('getSale', 'sumTotalRawAmountCount'));
         
@@ -130,18 +129,23 @@ class SaleController extends Controller
 
     public function ajaxSearch(Request $request)
     {
+        $searchValue = $request->search;
+        //$searchValue = '210';
         $getSale = Sale::with('saleItems')
                         ->leftJoin('outlets', 'outlets.id', '=', 'sales.outlet_id')
                         ->leftJoin('distributors', 'distributors.id', '=', 'outlets.distributor_id')
                         ->select('outlets.name as outletName', 'outlets.mobile as outletMobile', 'outlets.address as outletAddress','outlets.visi_id', 'outlets.visi_size',
                                 'sales.*', 
                                 'distributors.name as dbName', 'distributors.id as dbID' 
-                        )->where('outlets.name', 'Like', '%'.$request->search.'%')
-                        ->orWhere('outlets.visi_id', 'Like', '%'.$request->search.'%')
-                        ->orWhere('outlets.visi_size', 'Like', '%'.$request->search.'%')
-                        ->orWhere('distributors.name', 'Like', '%'.$request->search.'%')
-                        ->orWhere('call_no', 'Like', '%'.$request->search.'%')
+                        )->where('outlets.name', 'LIKE', '%'.$searchValue.'%')
+                        ->orWhere('outlets.visi_id', 'LIKE', '%'.$searchValue.'%')
+                        ->orWhere('outlets.visi_size', 'LIKE', '%'.$searchValue.'%')
+                        ->orWhere('distributors.name', 'LIKE', '%'.$searchValue.'%')
+                        ->orWhere('call_no', 'LIKE', '%'.$searchValue.'%')
+                        //->orwhere('outlets.visi_id',$request->search)
+                        //->orwhere('outlets.visi_size',$request->search)
                         ->orderBy('id', 'DESC')->paginate('20');
+        $getSale->appends(['q' => $searchValue]);
         $sumTotalRawAmountCount = $getSale->sum('grand_total');
         //return $getSale;
         return view('admin.sale.index-datatable', compact('getSale', 'sumTotalRawAmountCount'));
@@ -151,7 +155,15 @@ class SaleController extends Controller
 
         public function filterOutlet($id)
         {
-            $getSale = self::getRecord()->getSale->where('outlet_id', $id);
+            //$getSale = self::getRecord()->getSale->where('outlet_id', $id);
+            $getSale = Sale::with('saleItems')
+                        ->leftJoin('outlets', 'outlets.id', '=', 'sales.outlet_id')
+                        ->leftJoin('distributors', 'distributors.id', '=', 'outlets.distributor_id')
+                        ->select('outlets.name as outletName', 'outlets.mobile as outletMobile', 'outlets.address as outletAddress','outlets.visi_id', 'outlets.visi_size',
+                                'sales.*', 
+                                'distributors.name as dbName', 'distributors.id as dbID' 
+                        )->where('outlet_id', $id)
+                        ->orderBy('id', 'DESC')->paginate('20');
             $sumTotalRawAmountCount = $getSale->where('outlet_id', $id)->sum('grand_total');
             //dd($getSale);
             return view('admin.sale.index-datatable', compact('getSale', 'sumTotalRawAmountCount'));
@@ -161,8 +173,17 @@ class SaleController extends Controller
 
          public function filterDistributor($id)
         {
-            $getSale = self::getRecord()->getSale->where('dbID', $id);
-            $sumTotalRawAmountCount = $getSale->where('db_id', $id)->sum('grand_total');
+            //$getSale = self::getRecord()->getSale->where('dbID', $id);
+            $getSale = Sale::with('saleItems')
+                        ->leftJoin('outlets', 'outlets.id', '=', 'sales.outlet_id')
+                        ->leftJoin('distributors', 'distributors.id', '=', 'outlets.distributor_id')
+                        ->select('outlets.name as outletName', 'outlets.mobile as outletMobile', 'outlets.address as outletAddress','outlets.visi_id', 'outlets.visi_size',
+                                'sales.*', 
+                                'distributors.name as dbName', 'distributors.id as dbID' 
+                        )->where('distributors.id', $id)
+                        ->orderBy('id', 'DESC')->paginate('20');
+            
+            $sumTotalRawAmountCount = $getSale->where('dbID', $id)->sum('grand_total');
             //dd($getSale);
             return view('admin.sale.index-datatable', compact('getSale', 'sumTotalRawAmountCount'));
         }
@@ -215,9 +236,15 @@ class SaleController extends Controller
 
 
     //Excel
-    public function exportExcel()
+    public function exportExcel(Request $request)
     {
-        return Excel::download(new SalesExport, 'sales.xlsx');
+        $excelSearchBoxInput = $request->excelSearchBoxInput;
+        $exceldateFilter = $request->exceldateFilter;
+        $excelOutletFilter = $request->excelOutletFilter;
+        $excelDistributorFilter = $request->excelDistributorFilter;
+        $saleExport = new SalesExport($excelSearchBoxInput, $exceldateFilter, $excelOutletFilter, $excelDistributorFilter);
+        //return $saleExport->view();
+        return Excel::download($saleExport, 'sales.xlsx');
     }
     
     //pfd

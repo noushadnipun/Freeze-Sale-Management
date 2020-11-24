@@ -90,7 +90,7 @@
                     success: function (data) {
                         //console.log(data)
                         $('#showdata').empty().append(data);
-                        paginate("{{route('admin_distributor_data')}}")
+                        paginate();
                     }
                 });
             }
@@ -195,21 +195,20 @@
             //
 
             //Paginition
-            function paginate(arg){
-                $('#showdata').on('click', ".pagination a", function(e){
-                    e.preventDefault();
-                    let url = $(this).attr('href').split('page=')[1];
-                    $.ajax({
-                        type: "get",
-                        //"{{route('admin_distributor_data')}}?page="
-                        url: arg+"?page="+url,
-                        success: function(data){
-                            $('#showdata').empty().append(data);
-                        },
-                    })
-                })
+            function paginate(){
+                $(document).ajaxComplete(function() {
+                    $('.pagination a').click(function(e) {
+                        e.preventDefault();
+                        var url = $(this).attr('href');
+                        $.ajax({
+                            url: url,
+                            success: function(data) {
+                                $('#showdata').html(data);
+                            }
+                        });
+                    });
+                });
             }
-            paginate();
             
             //
 
@@ -229,7 +228,7 @@
                         // console.log(data)
                         if(search){
                             $('#showdata').empty().html(data);
-                            paginate("{{route('admin_distributor_search')}}");
+                            paginate();
                             //console.log(data.length)
                         } else {
                             getRecord() 

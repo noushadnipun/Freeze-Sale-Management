@@ -24,7 +24,7 @@ class DistributorController extends Controller
 
     public function getRecord(Request $request, $id = null)
     {
-        $getDistributor = Distributor::orderBy('id', 'DESC')->paginate('10');
+        $getDistributor = Distributor::orderBy('id', 'DESC')->paginate('20');
         if(!empty($id)){
             $editDistributor = Distributor::find($id);
             return view('admin.distributor.edit-data', compact('getDistributor', 'editDistributor'));
@@ -33,7 +33,7 @@ class DistributorController extends Controller
                                 ->orWhere('mobile', 'Like', '%'.$request->search.'%')
                                 ->orWhere('description', 'Like', '%'.$request->search.'%')
                                 ->orderBy('id', 'DESC')
-                                ->paginate('50');
+                                ->paginate('20');
             $editDistributor = '';
             return view('admin.distributor.data', compact('getDistributor', 'editDistributor'));
         }else{
