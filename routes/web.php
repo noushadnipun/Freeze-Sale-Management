@@ -97,6 +97,28 @@ Route::group(['prefix'=> 'admin/', 'namespace'=> 'Admin', 'as' => 'admin_','midd
     Route::post('user/update', 'HomeController@userUpdate')->name('user_update');
     Route::get('user/delete/{datefilter}', 'HomeController@userDestroy')->name('user_delete');
 
+
+    //Excel Top Sheet
+    //For test Purpose
+    Route::get('/excel-top-sheet', function(){
+          $getSale = App\Sale::with('saleItems')
+                        ->leftJoin('outlets', 'outlets.id', '=', 'sales.outlet_id')
+                        ->leftJoin('distributors', 'distributors.id', '=', 'outlets.distributor_id')
+                        ->select('outlets.name as outletName', 'outlets.mobile as outletMobile', 'outlets.address as outletAddress','outlets.visi_id', 'outlets.visi_size',
+                                'sales.*', 
+                                'distributors.name as dbName', 'distributors.id as dbID' 
+                        )->orderBy('id', 'DESC')->get();
+
+    $totalSaleCount = $getSale->count();
+    $itemPerPage = 4;
+
+    $ceilPage = ceil($totalSaleCount / $itemPerPage);
+    
+    $lastItemCount = $totalSaleCount % $itemPerPage;
+        
+        return view('admin.sale.export-excel-top-sheet', compact('getSale','ceilPage','lastItemCount','itemPerPage'));
+    });
+
 });
 
 //Api

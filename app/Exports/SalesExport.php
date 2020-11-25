@@ -19,7 +19,12 @@ use Maatwebsite\Excel\Events\AfterSheet;
 //
 use App\CustomClass\ExportsExcelQuery;
 
-class SalesExport implements  FromView,  ShouldAutoSize, WithEvents
+
+use App\Exports\Sheets\ReportSheets;
+use App\Exports\Sheets\TopSheets;
+
+//FromView,  ShouldAutoSize, WithEvents,
+class SalesExport implements  WithMultipleSheets
 {
     use Exportable;
     /**
@@ -32,15 +37,16 @@ class SalesExport implements  FromView,  ShouldAutoSize, WithEvents
         return Sale::all();
     }
    */
-
+    
     public function __construct($excelSearchBoxInput = null, $exceldateFilter = null, $excelOutletFilter = null, $excelDistributorFilter = null){
         $this->exceldateFilter = $exceldateFilter;
         $this->excelSearchBoxInput = $excelSearchBoxInput;
         $this->excelOutletFilter = $excelOutletFilter;
         $this->excelDistributorFilter = $excelDistributorFilter;
+        
     }
     
-    
+ /*   
     public function view(): View
     {
         $exportsExcelQuery = new ExportsExcelQuery();
@@ -65,7 +71,7 @@ class SalesExport implements  FromView,  ShouldAutoSize, WithEvents
                         ->select('outlets.name as outletName', 'outlets.mobile as outletMobile', 'outlets.address as outletAddress','outlets.visi_id', 'outlets.visi_size',
                                 'sales.*', 
                                 'distributors.name as dbName', 'distributors.id as dbID' 
-                        )->orderBy('id', 'DESC')->paginate('2');
+                        )->orderBy('id', 'DESC')->get();
         }
         $numRows = count($getSale)+2;
         
@@ -101,7 +107,7 @@ class SalesExport implements  FromView,  ShouldAutoSize, WithEvents
         ];
     }
     */
-
+/*
     public function registerEvents(): array
     {
        
@@ -122,6 +128,118 @@ class SalesExport implements  FromView,  ShouldAutoSize, WithEvents
 
             },
         ];
+    }
+
+*/
+    //
+
+
+    // Sheet
+    public function sheets(): array
+    {
+         if(!empty($this->excelSearchBoxInput)){
+            $getSale = Sale::with('saleItems')
+                    ->leftJoin('outlets', 'outlets.id', '=', 'sales.outlet_id')
+                    ->leftJoin('distributors', 'distributors.id', '=', 'outlets.distributor_id')
+                    ->select('outlets.name as outletName', 'outlets.mobile as outletMobile', 'outlets.address as outletAddress','outlets.visi_id', 'outlets.visi_size',
+                            'sales.*', 
+                            'distributors.name as dbName', 'distributors.id as dbID' 
+                    )->where('outlets.name', 'LIKE', '%'.$this->excelSearchBoxInput.'%')
+                    ->orWhere('outlets.visi_id', 'LIKE', '%'.$this->excelSearchBoxInput.'%')
+                    ->orWhere('outlets.visi_size', 'LIKE', '%'.$this->excelSearchBoxInput.'%')
+                    ->orWhere('distributors.name', 'LIKE', '%'.$this->excelSearchBoxInput.'%')
+                    ->orWhere('call_no', 'LIKE', '%'.$this->excelSearchBoxInput.'%')
+                    //->orwhere('outlets.visi_id',$request->search)
+                    //->orwhere('outlets.visi_size',$request->search)
+                    ->orderBy('id', 'DESC')->get();
+
+        } elseif(!empty($this->exceldateFilter)){        
+            $date = $this->exceldateFilter;
+         
+            $explode = explode(' - ', $date);
+            $getSale = Sale::with('saleItems')->leftJoin('outlets', 'outlets.id', '=', 'sales.outlet_id')
+                                        ->leftJoin('distributors', 'distributors.id', '=', 'outlets.distributor_id')
+                                        ->select('outlets.name as outletName', 'outlets.mobile as outletMobile', 'outlets.address as outletAddress','outlets.visi_id', 'outlets.visi_size',
+                                                'sales.*', 
+                                                'distributors.name as dbName', 'distributors.id as dbID' 
+                                        )//->whereBetween('sales.created_at', array($explode[0], $explode[1]))
+                                        ->whereBetween('sales.call_date', array($explode[0], $explode[1]))
+                                        ->orderBy('id', 'DESC')->get();
+
+        } elseif(!empty($this->excelOutletFilter)){        
+            $getSale = Sale::with('saleItems')
+                        ->leftJoin('outlets', 'outlets.id', '=', 'sales.outlet_id')
+                        ->leftJoin('distributors', 'distributors.id', '=', 'outlets.distributor_id')
+                        ->select('outlets.name as outletName', 'outlets.mobile as outletMobile', 'outlets.address as outletAddress','outlets.visi_id', 'outlets.visi_size',
+                                'sales.*', 
+                                'distributors.name as dbName', 'distributors.id as dbID' 
+                        )->where('outlet_id', $this->excelOutletFilter)
+                        ->orderBy('id', 'DESC')->get();
+
+        } elseif(!empty($this->excelDistributorFilter)){        
+            $getSale =  Sale::with('saleItems')
+                        ->leftJoin('outlets', 'outlets.id', '=', 'sales.outlet_id')
+                        ->leftJoin('distributors', 'distributors.id', '=', 'outlets.distributor_id')
+                        ->select('outlets.name as outletName', 'outlets.mobile as outletMobile', 'outlets.address as outletAddress','outlets.visi_id', 'outlets.visi_size',
+                                'sales.*', 
+                                'distributors.name as dbName', 'distributors.id as dbID' 
+                        )->where('distributors.id', $this->excelDistributorFilter)
+                        ->orderBy('id', 'DESC')->get();
+
+        }
+        else {
+    
+        $getSale = Sale::with('saleItems')
+                        ->leftJoin('outlets', 'outlets.id', '=', 'sales.outlet_id')
+                        ->leftJoin('distributors', 'distributors.id', '=', 'outlets.distributor_id')
+                        ->select('outlets.name as outletName', 'outlets.mobile as outletMobile', 'outlets.address as outletAddress','outlets.visi_id', 'outlets.visi_size',
+                                'sales.*', 
+                                'distributors.name as dbName', 'distributors.id as dbID' 
+                        )->orderBy('id', 'DESC')->get();
+        };
+        $getCount = $getSale->count();
+        $perPage = 20;
+        $ceilPage = ceil($getCount / $perPage);
+        $lastCount =  $getCount%$perPage;
+
+
+        $sheets = [];
+        
+        for ($i=0; $i < $ceilPage; $i++) {
+            $page = $i;
+            $take = $i == ($ceilPage -1) && $lastCount != 0 ? $lastCount : $perPage;
+
+
+            $sheets[] = new ReportSheets(
+                    $this->excelSearchBoxInput, 
+                    $this->exceldateFilter, 
+                    $this->excelOutletFilter,  
+                    $this->excelDistributorFilter,
+                    $page,
+                    $perPage,
+                    $take
+                );
+        }
+
+            $sheets[] = new TopSheets($this->excelSearchBoxInput, 
+                    $this->exceldateFilter, 
+                    $this->excelOutletFilter,  
+                    $this->excelDistributorFilter,
+                    $getSale, $perPage, $page, $take);
+
+            
+            // $sheets = [
+            //     $reportSheet++,
+            //     $topSheet,
+            // ];
+        // $sheets = [
+        //     new ReportSheets($this->excelSearchBoxInput, $this->exceldateFilter, $this->excelOutletFilter,  $this->excelDistributorFilter),
+        //     new TopSheets(),
+        // ];
+       
+        return $sheets;
+       
+        
     }
 
 

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ExportsExcelQuery extends Model
 {
     //
-    public function getSaleSearchBoxInput($arg){
+    public function getSaleSearchBoxInput($arg, $skip, $take){
         return Sale::with('saleItems')
                     ->leftJoin('outlets', 'outlets.id', '=', 'sales.outlet_id')
                     ->leftJoin('distributors', 'distributors.id', '=', 'outlets.distributor_id')
@@ -21,11 +21,11 @@ class ExportsExcelQuery extends Model
                     ->orWhere('call_no', 'LIKE', '%'.$arg.'%')
                     //->orwhere('outlets.visi_id',$request->search)
                     //->orwhere('outlets.visi_size',$request->search)
-                    ->orderBy('id', 'DESC')->get();
+                    ->orderBy('id', 'DESC')->skip($skip)->take($take)->get();
     }
 
     //
-    public function getSaleExceldateFilter($arg){
+    public function getSaleExceldateFilter($arg, $skip, $take){
         $date = $arg;
          
         $explode = explode(' - ', $date);
@@ -36,13 +36,13 @@ class ExportsExcelQuery extends Model
                                                 'distributors.name as dbName', 'distributors.id as dbID' 
                                         )//->whereBetween('sales.created_at', array($explode[0], $explode[1]))
                                         ->whereBetween('sales.call_date', array($explode[0], $explode[1]))
-                                        ->orderBy('id', 'DESC')->get();
+                                        ->orderBy('id', 'DESC')->skip($skip)->take($take)->get();
     
     }
 
     //
 
-    public function getSaleExcelOutletFilter($arg){
+    public function getSaleExcelOutletFilter($arg, $skip, $take){
         return Sale::with('saleItems')
                         ->leftJoin('outlets', 'outlets.id', '=', 'sales.outlet_id')
                         ->leftJoin('distributors', 'distributors.id', '=', 'outlets.distributor_id')
@@ -50,11 +50,11 @@ class ExportsExcelQuery extends Model
                                 'sales.*', 
                                 'distributors.name as dbName', 'distributors.id as dbID' 
                         )->where('outlet_id', $arg)
-                        ->orderBy('id', 'DESC')->get();
+                        ->orderBy('id', 'DESC')->skip($skip)->take($take)->get();
     }
 
     //
-    public function getSaleExcelDistributorFilter($arg){
+    public function getSaleExcelDistributorFilter($arg, $skip, $take){
 
        return Sale::with('saleItems')
                         ->leftJoin('outlets', 'outlets.id', '=', 'sales.outlet_id')
@@ -63,7 +63,7 @@ class ExportsExcelQuery extends Model
                                 'sales.*', 
                                 'distributors.name as dbName', 'distributors.id as dbID' 
                         )->where('distributors.id', $arg)
-                        ->orderBy('id', 'DESC')->get();
+                        ->orderBy('id', 'DESC')->skip($skip)->take($take)->get();
     }
 
 

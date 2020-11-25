@@ -19,9 +19,14 @@
         </tr>
     </thead>
     <tbody>
-    <?php foreach($getSale as $key => $data)  {?>
+        
+     <?php foreach($getSale as $key => $data)  {?>
         <tr>
-            <td style="vertical-align: center; text-align: center;">{{++$key}}</td>
+            <td style="vertical-align: center; text-align: center;">
+   
+               {{++$getSerialNumber}}
+                
+            </td>
             <td style="vertical-align: center; text-align: center;">{{$data->call_no}}</td>
             <td style="vertical-align: center; text-align: center;">{{$data->call_date}}</td>
             <td style="vertical-align: center; text-align: center;">{{$data->pull_date}}</td>
@@ -81,7 +86,7 @@
     </tbody>
     <tfoot>
         <tr>
-            <th colspan="11" class="text-left" style="font-weight: bold;  font-size: 12px;">
+            <th colspan="12" class="text-left" style="font-weight: bold;  font-size: 12px;">
                 @php
                  $inWordAmount  = App\CustomClass\NumberToWord::numberTowords($sumTotalRawAmountCount); 
                 @endphp
